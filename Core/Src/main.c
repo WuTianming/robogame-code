@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "printf.h"
 #include "motor.hpp"
+#include "Chassis.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-Class_Motor_With_Hall_Encoder M1;
+Class_Chassis car;
 
 /* USER CODE END 0 */
 
@@ -97,31 +98,14 @@ int main(void)
   MX_TIM5_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-  M1.Init(m1_en_GPIO_Port, m1_en_Pin, m1r_en_GPIO_Port, m1r_en_Pin,
-          &htim5, TIM_CHANNEL_1, TIM_CHANNEL_2,
-          &htim3, m1_yellow_Pin, m1_yellow_GPIO_Port, m1_green_Pin, m1_green_GPIO_Port);
-
-  // M1.Set_Rotate_Direction_Flag(CCW);
-  M1.Set_Control_Method(Control_Method_OMEGA);
-  M1.Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
-  // M1.Omega_PID.Init(250, 2000, 0, 20000, 20000);
-  // M1.Omega_PID.Init(400, 1500, 0, 20000, 20000);
-  // M1.Omega_PID.Init(400, 2000, 0, 20000, 20000);    // this will do with the wheel installed
-
+  car.Init();
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  float base = 7.0f;
-  float tune[] = { 1, 1, 1.5, 1.5, 1.68, 1.68, 1.5, 1.5, 1.3345, 1.3345, 1.2599, 1.2599, 1.12246, 1.12246, 1, 1, -1 };
-  // float tune[] = { 1.5, 2, -1 };
-  int qwq = 0;
   while (1)
   {
-    M1.Set_Omega_Target(base * tune[qwq]);
-    ++qwq;
-    if (tune[qwq] < 0) qwq = 0;
     HAL_Delay(1200);
     /* USER CODE END WHILE */
 
@@ -179,23 +163,16 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  // TODO: trigger callback function in Chassis (delegate operation)
   switch (GPIO_Pin) {
-    case GPIO_PIN_1:
-    {
-      M1.Hall_Encoder_GPIO_EXTI_Callback();
-      break;
-    }
-    default: break;
+    default:
+      car.Hall_Encoder_GPIO_EXTI_Callback(GPIO_Pin);  // forward
   }
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-  // TODO: move these operations into Chassis
   // htim3 is used to trigger PID recalculation
   if (htim == &htim3) {
-    M1.Calculate_TIM_PeriodElapsedCallback();
-    M1.Output();
+    car.Calculate_TIM_PeriodElapsedCallback();
   }
 }
 
