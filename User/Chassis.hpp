@@ -73,13 +73,16 @@ class Class_Chassis
 
         void Set_Velocity(SpeedTypeDef __Velocity);
         void Set_Control_Method(Enum_Control_Method __Control_Method);
+        void Set_DR16(bool active);
 
         void Hall_Encoder_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
         void Calculate_TIM_PeriodElapsedCallback();
 
     protected:
 
-        //底盘控制方式
+        bool use_dr16 = false;
+
+        //电机PID控制方式
         Enum_Control_Method Control_Method = Control_Method_OMEGA;
 
         //底盘速度

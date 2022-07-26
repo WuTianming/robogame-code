@@ -118,6 +118,15 @@ void Class_Chassis::Set_Control_Method(Enum_Control_Method __Control_Method)
 }
 
 /**
+ * @brief 设定是否启用遥控器
+ *
+ * @param active 是否使用遥控器
+ */
+void Class_Chassis::Set_DR16(bool active) {
+    use_dr16 = active;
+}
+
+/**
  * @brief 底盘电机霍尔编码器触发中断处理函数
  *
  */
@@ -152,8 +161,10 @@ void Class_Chassis::Hall_Encoder_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
 {
     //遥控器处理
-    DR16.Process_TIM_PeriodElapsedCallback();
-    Velocity = DR16.Get_Velocity();
+    if (use_dr16) {
+        DR16.Process_TIM_PeriodElapsedCallback();
+        Velocity = DR16.Get_Velocity();
+    }
 
     Math_Constrain(&Velocity.X, -X_MAX, X_MAX);
     Math_Constrain(&Velocity.Y, -Y_MAX, Y_MAX);
@@ -166,13 +177,13 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
     Motor[2].Set_Omega_Target((OMEGA_TO_MS * Velocity.Omega + Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[2].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
     Motor[3].Set_Omega_Target((OMEGA_TO_MS * Velocity.Omega - Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[3].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
     */
-    float velRot = Velocity.Omega * OMEGA_TO_LINEAR;
-    float velr   = K_LINEAR_COSINE * (Velocity.Y + Velocity.X);
-    float vell   = K_LINEAR_COSINE * (Velocity.Y - Velocity.X);
-    Motor[0].Set_Omega_Target((velr - velRot) / WHEEL_RADIUS);
-    Motor[1].Set_Omega_Target((vell - velRot) / WHEEL_RADIUS);
-    Motor[2].Set_Omega_Target((vell + velRot) / WHEEL_RADIUS);
-    Motor[3].Set_Omega_Target((velr + velRot) / WHEEL_RADIUS);
+    float velRot = Velocity.Omega * OMEGA_TO_LINEAR / WHEEL_RADIUS;
+    float velr   = (Velocity.Y + Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
+    float vell   = (Velocity.Y - Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
+    Motor[0].Set_Omega_Target(velr - velRot);
+    Motor[1].Set_Omega_Target(vell - velRot);
+    Motor[2].Set_Omega_Target(vell + velRot);
+    Motor[3].Set_Omega_Target(velr + velRot);
 
     //电机输出值设定并输出
     for(int i = 0; i < 4; i++) {
