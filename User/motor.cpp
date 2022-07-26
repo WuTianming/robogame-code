@@ -45,14 +45,7 @@ Type Math_Abs(Type x) {
  * @param __Input_B_GPIO_Pin 霍尔编码器方向B引脚号
  * @param __Input_B_GPIOx 霍尔编码器方向B引脚组
  */
-void Class_Motor::Init(
-    GPIO_TypeDef *en, uint16_t enpin, GPIO_TypeDef *ren, uint16_t renpin,
-    TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn) {
-
-    this->en = en;
-    this->enpin = enpin;
-    this->ren = ren;
-    this->renpin = renpin;
+void Class_Motor::Init(TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn) {
     this->htim = htim;
     this->pwmchn = pwmchn;
     this->rpwmchn = rpwmchn;
@@ -60,18 +53,6 @@ void Class_Motor::Init(
     this->Out = 0;
     HAL_TIM_PWM_Start(htim, pwmchn);
     HAL_TIM_PWM_Start(htim, rpwmchn);
-    this->Set_Detach(false);
-}
-
-/**
- * @brief 设定电机是否允许自由旋转
- *
- * @param detach 是否断开控制
- */
-void Class_Motor::Set_Detach(bool detach) {
-    detached = detach;
-    HAL_GPIO_WritePin(en, enpin, detach ? GPIO_PIN_RESET : GPIO_PIN_SET);
-    HAL_GPIO_WritePin(ren, renpin, detach ? GPIO_PIN_RESET : GPIO_PIN_SET);
 }
 
 /**
@@ -108,15 +89,6 @@ void Class_Motor::Set_Motor_PWM_Period(int32_t __Motor_PWM_Period) {
  */
 void Class_Motor::Set_Out(int32_t __Out) {
     Out = __Out;
-}
-
-/**
- * @brief 获取电机是否允许自由旋转
- *
- * @return bool 是否自由旋转
- */
-bool Class_Motor::Get_Detach() {
-    return(detached);
 }
 
 /**
@@ -187,12 +159,8 @@ void Class_Motor::Output() {
  * @param __Input_B_GPIO_Pin 霍尔编码器方向B引脚号
  * @param __Input_B_GPIOx 霍尔编码器方向B引脚组
  */
-void Class_Motor_With_Hall_Encoder::Init(GPIO_TypeDef *en, uint16_t enpin, GPIO_TypeDef *ren, uint16_t renpin, TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn, TIM_HandleTypeDef *__Calculate_TIM, uint16_t __Input_A_GPIO_Pin, GPIO_TypeDef *__Input_A_GPIOx, uint16_t __Input_B_GPIO_Pin, GPIO_TypeDef *__Input_B_GPIOx)
+void Class_Motor_With_Hall_Encoder::Init(TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn, TIM_HandleTypeDef *__Calculate_TIM, uint16_t __Input_A_GPIO_Pin, GPIO_TypeDef *__Input_A_GPIOx, uint16_t __Input_B_GPIO_Pin, GPIO_TypeDef *__Input_B_GPIOx)
 {
-    this->en = en;
-    this->enpin = enpin;
-    this->ren = ren;
-    this->renpin = renpin;
     this->htim = htim;
     this->pwmchn = pwmchn;
     this->rpwmchn = rpwmchn;
@@ -206,7 +174,6 @@ void Class_Motor_With_Hall_Encoder::Init(GPIO_TypeDef *en, uint16_t enpin, GPIO_
     this->Out = 0;
     HAL_TIM_PWM_Start(htim, pwmchn);
     HAL_TIM_PWM_Start(htim, rpwmchn);
-    this->Set_Detach(false);
 }
 
 /**
@@ -277,9 +244,9 @@ void Class_Motor_With_Hall_Encoder::Hall_Encoder_GPIO_EXTI_Callback()
 {
     //计算电机转过的编码数, 以便后续算出角度和速度
     if(((HAL_GPIO_ReadPin(Input_B_GPIOx, Input_B_GPIO_Pin) == 0) ^ (Rotate_Direction_Flag == CW)) == 0) {
-        Hall_Encoder_Count--;
-    } else {
         Hall_Encoder_Count++;
+    } else {
+        Hall_Encoder_Count--;
     }
 }
 

@@ -59,16 +59,13 @@ enum Enum_Rotate_Direction {
 
 class Class_Motor {
     public:
-        void Init(GPIO_TypeDef *en, uint16_t enpin, GPIO_TypeDef *ren, uint16_t renpin,
-            TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn);
+        void Init(TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn);
 
-        void Set_Detach(bool detach);
         void Set_Rotate_Direction_Flag(Enum_Rotate_Direction __Rotate_Direction_Flag);
         void Set_Motor_Full_Omega(float __Motor_Full_Omega);
         void Set_Motor_PWM_Period(int32_t __Motor_PWM_Period);
         void Set_Out(int32_t __Out);
 
-        bool Get_Detach();
         Enum_Rotate_Direction Get_Rotate_Direction_Flag();
         float Get_Motor_Full_Omega();
         int32_t Get_Motor_PWM_Period();
@@ -78,13 +75,9 @@ class Class_Motor {
 
     // protected:
     public:
-        GPIO_TypeDef *en, *ren;
-        uint16_t enpin, renpin;
         TIM_HandleTypeDef *htim;
         uint32_t pwmchn, rpwmchn;
 
-        //是否断开，即允许自由旋转
-        bool detached = false;
         //电机正向旋转方向
         //指的是，如果我让Omega或者Out为正值，那么电机会怎么转
         //接线的时候统一红正黑负，由代码负责决定PWM是否反向（r）
@@ -105,7 +98,7 @@ class Class_Motor_With_Hall_Encoder : public Class_Motor {
         //电机角度环PID参数
         Class_PID Angle_PID;
 
-        void Init(GPIO_TypeDef *en, uint16_t enpin, GPIO_TypeDef *ren, uint16_t renpin, TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn, TIM_HandleTypeDef *__Calculate_TIM, uint16_t __Input_A_GPIO_Pin, GPIO_TypeDef *__Input_A_GPIOx, uint16_t __Input_B_GPIO_Pin, GPIO_TypeDef *__Input_B_GPIOx);
+        void Init(TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn, TIM_HandleTypeDef *__Calculate_TIM, uint16_t __Input_A_GPIO_Pin, GPIO_TypeDef *__Input_A_GPIOx, uint16_t __Input_B_GPIO_Pin, GPIO_TypeDef *__Input_B_GPIOx);
 
         void Set_Control_Method(Enum_Control_Method Control_Method);
         void Set_Omega_Target(float Omega_Target);

@@ -16,12 +16,11 @@
 
 #include "main.h"
 #include "Motor.hpp"
-#include "DR16.hpp"
 
 /* Exported macros -----------------------------------------------------------*/
 
 //轮半径, m TODO
-const float WHEEL_RADIUS = 0.050f;
+const float WHEEL_RADIUS = 0.0635f;
 
 //轮组满转线速度, m/s
 const float WHEEL_FULL_V = (MOTOR_FULL_OMEGA * WHEEL_RADIUS);
@@ -53,6 +52,20 @@ const float OMEGA_MAX = 2.0f;
 
 /* Exported types ------------------------------------------------------------*/
 
+/**
+ * @brief 速度类型定义
+ *
+ */
+struct SpeedTypeDef
+{
+    //横移 m/s 右为正
+    float X;
+    //前后 m/s 前为正
+    float Y;
+    //旋转 rad/s 逆时针为正
+    float Omega;
+};
+
 class Class_Chassis
 {
     public:
@@ -66,21 +79,16 @@ class Class_Chassis
          * M[1]  O-------O  M[3]
          */
         Class_Motor_With_Hall_Encoder Motor[4];
-        //底盘对应的遥控器
-        Class_DR16 DR16;
 
         void Init();        // arguments implicitly contained in the function
 
         void Set_Velocity(SpeedTypeDef __Velocity);
         void Set_Control_Method(Enum_Control_Method __Control_Method);
-        void Set_DR16(bool active);
 
         void Hall_Encoder_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
         void Calculate_TIM_PeriodElapsedCallback();
 
     protected:
-
-        bool use_dr16 = false;
 
         //电机PID控制方式
         Enum_Control_Method Control_Method = Control_Method_OMEGA;

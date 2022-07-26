@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -91,12 +90,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_USART1_Init();
   MX_TIM5_Init();
-  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
   HAL_TIM_Base_Start_IT(&htim3);
@@ -104,9 +101,42 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  SpeedTypeDef vel;
+  vel.Omega = 0;
+  vel.X = 0;
+  vel.Y = 0;
   while (1)
   {
+    vel.Omega = 0.3f;
+    vel.X = 0;
+    vel.Y = 0;
+    car.Set_Velocity(vel);
     HAL_Delay(1200);
+    vel.Omega = 0;
+    vel.X = 0;
+    vel.Y = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(1000);
+    vel.Omega = 0.0f;
+    vel.X = 0.2;
+    vel.Y = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(1200);
+    vel.Omega = 0;
+    vel.X = 0;
+    vel.Y = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(1000);
+    vel.Omega = 0.0f;
+    vel.X = 0;
+    vel.Y = 0.2;
+    car.Set_Velocity(vel);
+    HAL_Delay(1200);
+    vel.Omega = 0;
+    vel.X = 0;
+    vel.Y = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
