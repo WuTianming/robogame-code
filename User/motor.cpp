@@ -132,7 +132,6 @@ int32_t Class_Motor::Get_Out() {
  *
  */
 void Class_Motor::Output() {
-    // TODO 确定正 PWM 是导致哪个方向的旋转
     int32_t real_out = (Rotate_Direction_Flag == CW) ? -Out : Out;
     if (real_out >= 0) {
         __HAL_TIM_SetCompare(htim, rpwmchn, 0);

@@ -55,8 +55,6 @@ enum Enum_Rotate_Direction {
  * where V  =  pwm_modulate(24 volts, pwm)
  *       Vr = -pwm_modulate(24 volts, rpwm)
  */
-// TODO copy necessary attributes from yssickjgd
-
 class Class_Motor {
     public:
         void Init(TIM_HandleTypeDef *htim, uint32_t pwmchn, uint32_t rpwmchn);
