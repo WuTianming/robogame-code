@@ -53,20 +53,6 @@ const float OMEGA_MAX = 2.0f;
 
 /* Exported types ------------------------------------------------------------*/
 
-/**
- * @brief 速度类型定义
- *
- */
-struct SpeedTypeDef
-{
-    //横移 m/s 右为正
-    float X;
-    //前后 m/s 前为正
-    float Y;
-    //旋转 rad/s 逆时针为正
-    float Omega;
-};
-
 class Class_Chassis
 {
     public:

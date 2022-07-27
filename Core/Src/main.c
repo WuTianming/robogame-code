@@ -108,6 +108,8 @@ int main(void)
   vel.Omega = 0;
   vel.X = 0;
   vel.Y = 0;
+  car.Set_DR16(true);
+  while (1) {}
   while (1)
   {
     vel.Omega = 0.3f;
@@ -206,6 +208,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   // htim3 is used to trigger PID recalculation
   if (htim == &htim3) {
     car.Calculate_TIM_PeriodElapsedCallback();
+  }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if(huart == &huart8)
+  {
+    car.DR16.Alive_UART_RxCpltCallback();
   }
 }
 

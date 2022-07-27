@@ -83,7 +83,7 @@ void Class_Chassis::Init()
 
     //电机PID初始化
     for(int i = 0; i < 4; i++) {
-        // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, 10000, 10000);
+        // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, 1000, 1000);
         Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
         Motor[i].Set_Control_Method(Control_Method_OMEGA);
     }
