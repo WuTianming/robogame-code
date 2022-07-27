@@ -93,6 +93,8 @@ void Error_Handler(void);
 #define m4_pwm_GPIO_Port GPIOB
 #define m4r_pwm_Pin GPIO_PIN_9
 #define m4r_pwm_GPIO_Port GPIOB
+#define DR16_RX_Pin GPIO_PIN_0
+#define DR16_RX_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
