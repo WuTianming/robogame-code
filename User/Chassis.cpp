@@ -87,6 +87,9 @@ void Class_Chassis::Init()
         Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
         Motor[i].Set_Control_Method(Control_Method_OMEGA);
     }
+
+    //遥控器初始化
+    DR16.Init(&huart8);
 }
 
 /**
@@ -111,6 +114,15 @@ void Class_Chassis::Set_Control_Method(Enum_Control_Method __Control_Method)
     for(int i = 0; i < 4; i++) {
         Motor[i].Set_Control_Method(__Control_Method);
     }
+}
+
+/**
+ * @brief 设定是否启用遥控器
+ *
+ * @param active 是否使用遥控器
+ */
+void Class_Chassis::Set_DR16(bool active) {
+    use_dr16 = active;
 }
 
 /**
@@ -149,6 +161,12 @@ void Class_Chassis::Hall_Encoder_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 #include "printf.h"
 void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
 {
+    //遥控器处理
+    if (use_dr16) {
+        DR16.Process_TIM_PeriodElapsedCallback();
+        Velocity = DR16.Get_Velocity();
+    }
+
     Math_Constrain(&Velocity.X, -X_MAX, X_MAX);
     Math_Constrain(&Velocity.Y, -Y_MAX, Y_MAX);
     Math_Constrain(&Velocity.Omega, -OMEGA_MAX, OMEGA_MAX);

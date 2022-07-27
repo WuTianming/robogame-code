@@ -16,6 +16,7 @@
 
 #include "main.h"
 #include "Motor.hpp"
+#include "DR16.hpp"
 
 /* Exported macros -----------------------------------------------------------*/
 
@@ -79,16 +80,21 @@ class Class_Chassis
          * M[1]  O-------O  M[3]
          */
         Class_Motor_With_Hall_Encoder Motor[4];
+        //底盘对应的遥控器
+        Class_DR16 DR16;
 
         void Init();        // arguments implicitly contained in the function
 
         void Set_Velocity(SpeedTypeDef __Velocity);
         void Set_Control_Method(Enum_Control_Method __Control_Method);
+        void Set_DR16(bool active);
 
         void Hall_Encoder_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
         void Calculate_TIM_PeriodElapsedCallback();
 
     protected:
+
+        bool use_dr16 = false;
 
         //电机PID控制方式
         Enum_Control_Method Control_Method = Control_Method_OMEGA;
