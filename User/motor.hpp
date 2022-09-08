@@ -4,8 +4,8 @@
 #include "PID.hpp"
 
 //默认PID参数，为特定的轮子调节得到
-const float omega_kp = 400,
-            omega_ki = 2000,
+const float omega_kp = 1400,
+            omega_ki = 1000,
             omega_kd = 0,
             omega_I_outmax = 20000,
             omega_outmax = 20000;

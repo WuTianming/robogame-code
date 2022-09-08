@@ -85,6 +85,12 @@ void Class_Chassis::Init()
     for(int i = 0; i < 4; i++) {
         // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, 1000, 1000);
         Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
+        // Motor[i].Omega_PID.Init(400, 2000, 0, 20000, 20000);
+        // Motor[i].Omega_PID.Init(1800, 3000, 0, 20000, 4000);
+        // Motor[i].Omega_PID.Init(1300, 2000, 0, 20000, 10000);
+        // Motor[i].Omega_PID.Init(1400, 1000, 0, 20000, 10000);        // this is really good
+        // Motor[i].Omega_PID.Init(1400, 1000, 0, 20000, 10000);
+        Motor[i].Omega_PID.Set_Dead_Zone(0.3);
         Motor[i].Set_Control_Method(Control_Method_OMEGA);
     }
 
@@ -190,6 +196,8 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
     char buf[40];
     for(int i = 0; i < 4; i++) {
         Motor[i].Calculate_TIM_PeriodElapsedCallback();
+        // if (Velocity.X == 0 && Velocity.Y == 0 && Velocity.Omega == 0)
+            // Motor[i].Set_Out(0);
         Motor[i].Output();
     }
     int len = sprintf(buf, "%d,%d,%d,%d\n", Motor[0].Hall_Encoder_Count, Motor[1].Hall_Encoder_Count, Motor[2].Hall_Encoder_Count, Motor[3].Hall_Encoder_Count);
