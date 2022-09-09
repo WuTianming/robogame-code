@@ -68,6 +68,7 @@ CPP_SOURCES = \
 User/Chassis.cpp \
 User/DR16.cpp \
 User/PID.cpp \
+User/Steer.cpp \
 User/motor.cpp \
 build/main.cpp
 

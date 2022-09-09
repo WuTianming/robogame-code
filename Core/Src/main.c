@@ -28,6 +28,7 @@
 #include "printf.h"
 #include "motor.hpp"
 #include "Chassis.hpp"
+#include "Steer.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +61,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 Class_Chassis car;
+Class_Steer   claw;
 
 /* USER CODE END 0 */
 
@@ -97,8 +99,12 @@ int main(void)
   MX_USART1_Init();
   MX_TIM5_Init();
   MX_UART8_Init();
+  MX_TIM8_Init();
+  MX_UART4_Init();
+  MX_UART5_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
+  claw.Init(&htim8, TIM_CHANNEL_1);
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
@@ -110,6 +116,25 @@ int main(void)
   vel.Y = 0;
   car.Set_DR16(true);
   while (1) {}
+  while (1) {
+    // claw.Set_Out(0.1);    // 2.5 / 20 = 0.125 = max
+    claw.Set_Out(0.06);
+    claw.Output();
+    HAL_Delay(1000);
+    claw.Set_Out(0.125);
+    claw.Output();
+    HAL_Delay(100);
+    claw.Set_Out(0.09);
+    claw.Output();
+    HAL_Delay(3000);
+    // claw.Set_Out(0.250);
+    // claw.Output();
+    // HAL_Delay(1000);
+    // claw.Set_Out(0.025);  // 0.5 / 20 = 0.025 = min
+    // claw.Output();
+    // HAL_Delay(1000);
+  }
+
   while (1)
   {
     vel.Omega = 0.3f;
