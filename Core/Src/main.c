@@ -29,6 +29,7 @@
 #include "motor.hpp"
 #include "Chassis.hpp"
 #include "Steer.hpp"
+#include "search.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,8 +116,10 @@ int main(void)
   vel.X = 0;
   vel.Y = 0;
   car.Set_DR16(true);
-  while (1) {}
+  // car.Set_DR16(false);
   while (1) {
+    const char *s = "heartbeartttt\n";
+    HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
     // claw.Set_Out(0.1);    // 2.5 / 20 = 0.125 = max
     claw.Set_Out(0.06);
     claw.Output();

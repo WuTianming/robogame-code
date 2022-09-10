@@ -178,12 +178,6 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
     Math_Constrain(&Velocity.Omega, -OMEGA_MAX, OMEGA_MAX);
 
     //速度解算
-    /*
-    Motor[0].Set_Omega_Target((-OMEGA_TO_MS * Velocity.Omega + Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[0].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
-    Motor[1].Set_Omega_Target((-OMEGA_TO_MS * Velocity.Omega - Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[1].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
-    Motor[2].Set_Omega_Target((OMEGA_TO_MS * Velocity.Omega + Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[2].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
-    Motor[3].Set_Omega_Target((OMEGA_TO_MS * Velocity.Omega - Velocity.X - Velocity.Y) / WHEEL_RADIUS * ((Motor[3].Get_Rotate_Direction_Flag() == CW)?1:(-1)));
-    */
     float velRot = Velocity.Omega * OMEGA_TO_LINEAR / WHEEL_RADIUS;
     float velr   = (Velocity.Y + Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
     float vell   = (Velocity.Y - Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
