@@ -30,6 +30,7 @@
 #include "Chassis.hpp"
 #include "Steer.hpp"
 #include "search.hpp"
+#include "csb.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,6 +40,20 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+void actuator_up() {
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_SET);
+}
+
+void actuator_down() {
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
+}
+
+void actuator_stop() {
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
+}
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,6 +118,7 @@ int main(void)
   MX_TIM8_Init();
   MX_UART4_Init();
   MX_UART5_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
   claw.Init(&htim8, TIM_CHANNEL_1);
@@ -119,6 +135,21 @@ int main(void)
   car.Set_DR16(false);
   car.Set_Control_Method(Control_Method_OPENLOOP);
 
+  while (1) {}
+
+  while (1) {
+    actuator_up();
+    HAL_Delay(2300);
+    actuator_stop();
+    actuator_down();
+    HAL_Delay(1150);
+    actuator_stop();
+    HAL_Delay(700);
+    actuator_down();
+    HAL_Delay(1150);
+  }
+
+/*
   Run12();
 
   vel.Y = 0.3;
@@ -132,26 +163,15 @@ int main(void)
     vel.Y = 0.3;
     car.Set_Velocity(vel);
   }
+*/
 
   while (1) {
     const char *s = "heartbeartttt\n";
     HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
-    // claw.Set_Out(0.1);    // 2.5 / 20 = 0.125 = max
-    claw.Set_Out(0.06);
-    claw.Output();
-    HAL_Delay(1000);
-    claw.Set_Out(0.125);
-    claw.Output();
-    HAL_Delay(100);
-    claw.Set_Out(0.09);
-    claw.Output();
+    claw.open();
+    HAL_Delay(2000);
+    claw.close();
     HAL_Delay(3000);
-    // claw.Set_Out(0.250);
-    // claw.Output();
-    // HAL_Delay(1000);
-    // claw.Set_Out(0.025);  // 0.5 / 20 = 0.025 = min
-    // claw.Output();
-    // HAL_Delay(1000);
   }
 
   while (1)

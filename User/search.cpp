@@ -10,6 +10,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "search.hpp"
+#include "csb.hpp"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -29,10 +30,19 @@ void GoForward() {
     car.Set_Velocity(vel);
 }
 
+void Stop() {
+    SpeedTypeDef vel;
+    vel.Omega = 0;
+    vel.Y = 0.0;
+    vel.X = 0.0;
+    car.Set_Velocity(vel);
+}
+
 void AdjustR() {
     SpeedTypeDef vel;
     vel.Omega = -0.4;
-    vel.Y = 0.3;
+    // vel.Y = 0.3;
+    vel.Y = 0.0;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -40,7 +50,8 @@ void AdjustR() {
 void AdjustL() {
     SpeedTypeDef vel;
     vel.Omega = 0.4;
-    vel.Y = 0.3;
+    // vel.Y = 0.3;
+    vel.Y = 0.0;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -65,14 +76,20 @@ void GoRight() {
 #define NEXT 1
 
 void Run12() {
+    // 先越过开始区的一坨黑线
     for (int i = 0; i < 100; i++) {
         Run1();
     }
+    // 再走直线直到第一个转弯
     while (true) {
         Run1();
         if ((CS10000)) {
             break;
         }
+    }
+    // 再开始往右平移
+    for (int i = 0; i < 100; i++) {
+        GoRight();
     }
     while (true) {
         Run2();
@@ -84,29 +101,46 @@ void Run1()
     if((CS10011) || (CS11001) || (CS10001) || (CS11011))
     {
         GoForward();
+        HAL_Delay(100);
     }
     else if((CS11000) || (CS11100))
     {
         AdjustR();
+        HAL_Delay(50);
     }
     else if((CS00011) || (CS00111))
     {
         AdjustL();
+        HAL_Delay(50);
     }
-    HAL_Delay(50);
+    else {
+        Stop();
+    }
 }
 
 int Ranging()
 {
+    GoRight();
+    uint32_t dist_mm1 = csb_get_distance();
+    TIM1_Delay_us(100 * 1000);          // 100 ms
+    uint32_t dist_mm2 = csb_get_distance();
+    if (dist_mm1 < dist_mm2) return 1;
+    else return -1;
     return 0;
 }
 
 void Run2()
 {
-    if(Ranging() == 0) GoRight();
+    int t = Ranging();
+    if(t == 0) { GoRight(); HAL_Delay(50); }
     //Ranging()是第二阶段超声测距函数，用于比较车前后与挡板距离
-    else if(Ranging() == 1) AdjustF();//前距离大于后距离
-    else if(Ranging() == -1) AdjustB();//反之
+    else if(t == 1) {
+        AdjustR();//越来越远
+        HAL_Delay(100);
+    } else if(t == -1) {
+        AdjustL();//反之
+        HAL_Delay(100);
+    }
 }
 
 void Run3()
@@ -392,10 +426,6 @@ void Run()
     TurnR90();
     TurnOffTrailing();
     TurnOnRanging();
-    while(!(CS00000))
-    {
-        Run2();
-    }
     TurnR90();
     Run3();
 }

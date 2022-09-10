@@ -25,7 +25,7 @@
 const float STEER_PWM_PERIOD = 0.020f;
 
 //舵机PWM满占空比对应的数值
-const int32_t STEER_PWM_PRESCALER = 10000;
+// const int32_t STEER_PWM_PRESCALER = 10000;
 
 /* Exported types ------------------------------------------------------------*/
 
@@ -39,6 +39,10 @@ class Class_Steer
         void Set_Out(float output);
 
         void Output();
+
+        void close();
+
+        void open();
 
     protected:
 

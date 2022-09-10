@@ -60,6 +60,10 @@ void Error_Handler(void);
 #define m1_yellow_Pin GPIO_PIN_1
 #define m1_yellow_GPIO_Port GPIOC
 #define m1_yellow_EXTI_IRQn EXTI1_IRQn
+#define actuator1_Pin GPIO_PIN_2
+#define actuator1_GPIO_Port GPIOH
+#define actuator2_Pin GPIO_PIN_3
+#define actuator2_GPIO_Port GPIOH
 #define m2_yellow_Pin GPIO_PIN_6
 #define m2_yellow_GPIO_Port GPIOA
 #define m2_yellow_EXTI_IRQn EXTI9_5_IRQn
@@ -83,6 +87,10 @@ void Error_Handler(void);
 #define m4_yellow_EXTI_IRQn EXTI9_5_IRQn
 #define m2r_pwm_Pin GPIO_PIN_0
 #define m2r_pwm_GPIO_Port GPIOI
+#define CSB_Trig_Pin GPIO_PIN_3
+#define CSB_Trig_GPIO_Port GPIOD
+#define CSB_Echo_Pin GPIO_PIN_7
+#define CSB_Echo_GPIO_Port GPIOD
 #define m2_green_Pin GPIO_PIN_5
 #define m2_green_GPIO_Port GPIOB
 #define m3_pwm_Pin GPIO_PIN_6

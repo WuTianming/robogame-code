@@ -79,7 +79,8 @@ void Class_Steer::Set_Out(float __Out)
     // float time;
     // time = STEER_PWM_MIDDLE + (__Out - Max_Angle / 2) / (Max_Angle / 2) * STEER_PWM_EXTREME_TO_MIDDLE;
     // Out = time / STEER_PWM_PERIOD * STEER_PWM_PRESCALER;
-    Out = __Out * STEER_PWM_PRESCALER;
+    // Out = __Out * STEER_PWM_PRESCALER;
+    Out = __Out;
 }
 
 /**
@@ -90,6 +91,23 @@ void Class_Steer::Output()
 {
     // Math_Constrain(&Out, (int32_t)(STEER_PWM_PRESCALER * STEER_PWM_LEFT), (int32_t)(STEER_PWM_PRESCALER * STEER_PWM_RIGHT));
     __HAL_TIM_SetCompare(Driver_PWM_TIM, Driver_PWM_TIM_Channel_x, Out);
+}
+
+void Class_Steer::close()
+{
+    Set_Out(1100);
+    Output();
+    HAL_Delay(100);
+    Set_Out(1010);
+    Output();
+    HAL_Delay(200);
+}
+
+void Class_Steer::open()
+{
+    Set_Out(750);
+    Output();
+    HAL_Delay(300);
 }
 
 /* Function prototypes -------------------------------------------------------*/

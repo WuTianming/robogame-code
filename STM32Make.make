@@ -69,6 +69,7 @@ User/Chassis.cpp \
 User/DR16.cpp \
 User/PID.cpp \
 User/Steer.cpp \
+User/csb.cpp \
 User/motor.cpp \
 User/search.cpp \
 build/main.cpp

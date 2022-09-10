@@ -72,6 +72,7 @@ class Class_Chassis
         void Init();        // arguments implicitly contained in the function
 
         void Set_Velocity(SpeedTypeDef __Velocity);
+        SpeedTypeDef Get_Velocity();
         void Set_Control_Method(Enum_Control_Method __Control_Method);
         void Set_DR16(bool active);
 

@@ -109,6 +109,16 @@ void Class_Chassis::Set_Velocity(SpeedTypeDef __Velocity)
 }
 
 /**
+ * @brief 获取底盘速度
+ *
+ * @returns 底盘速度
+ */
+SpeedTypeDef Class_Chassis::Get_Velocity()
+{
+    return Velocity;
+}
+
+/**
  * @brief 设定底盘控制方式
  *
  * @param __Control_Method 底盘控制方式
