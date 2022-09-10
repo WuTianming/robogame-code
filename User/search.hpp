@@ -108,6 +108,7 @@
 
 int Ranging(void);
 void Run(void);     //小车总的运行模块
+void Run12(void);
 void Run1(void);    //阶段一，直线到第一个转弯
 void Run2(void);    //阶段二，关闭正常巡线模式，通过激光测距确保直行
 void Run3(void);    //阶段三，开启巡线模块，识别、投壶

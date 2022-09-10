@@ -115,8 +115,24 @@ int main(void)
   vel.Omega = 0;
   vel.X = 0;
   vel.Y = 0;
-  car.Set_DR16(true);
-  // car.Set_DR16(false);
+  // car.Set_DR16(true);
+  car.Set_DR16(false);
+  car.Set_Control_Method(Control_Method_OPENLOOP);
+
+  Run12();
+
+  vel.Y = 0.3;
+  car.Set_Velocity(vel);
+  while (1) {
+    HAL_Delay(1000);
+    vel.Y = 0.0;
+    vel.Omega = 0.3;
+    car.Set_Velocity(vel);
+    HAL_Delay(1000);
+    vel.Y = 0.3;
+    car.Set_Velocity(vel);
+  }
+
   while (1) {
     const char *s = "heartbeartttt\n";
     HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
