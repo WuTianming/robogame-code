@@ -8,6 +8,7 @@ void TIM1_Delay_us(uint16_t n_us);
 
 //获取超声波模块的检测距离
 uint32_t csb_get_distance(void);
+uint32_t csb2_get_distance(void);
 
 #define CSB_HPP
 #endif

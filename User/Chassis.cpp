@@ -197,15 +197,15 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
     Motor[3].Set_Omega_Target(vell + velRot);
 
     //电机输出值设定并输出
-    char buf[40];
     for(int i = 0; i < 4; i++) {
         Motor[i].Calculate_TIM_PeriodElapsedCallback();
         // if (Velocity.X == 0 && Velocity.Y == 0 && Velocity.Omega == 0)
             // Motor[i].Set_Out(0);
         Motor[i].Output();
     }
-    int len = sprintf(buf, "%d,%d,%d,%d\n", Motor[0].Hall_Encoder_Count, Motor[1].Hall_Encoder_Count, Motor[2].Hall_Encoder_Count, Motor[3].Hall_Encoder_Count);
-    HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
+    // char buf[40];
+    // int len = sprintf(buf, "%d,%d,%d,%d\n", Motor[0].Hall_Encoder_Count, Motor[1].Hall_Encoder_Count, Motor[2].Hall_Encoder_Count, Motor[3].Hall_Encoder_Count);
+    // HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
 }
 
 /* Function prototypes -------------------------------------------------------*/

@@ -25,7 +25,8 @@ extern Class_Chassis car;
 void GoForward() {
     SpeedTypeDef vel;
     vel.Omega = 0;
-    vel.Y = 0.3;
+    // vel.Y = 0.3;
+    vel.Y = 0.4;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -101,7 +102,7 @@ void Run1()
     if((CS10011) || (CS11001) || (CS10001) || (CS11011))
     {
         GoForward();
-        HAL_Delay(100);
+        HAL_Delay(20);
     }
     else if((CS11000) || (CS11100))
     {
@@ -113,33 +114,53 @@ void Run1()
         AdjustL();
         HAL_Delay(50);
     }
-    else {
-        Stop();
-    }
+    // else {
+    //     Stop();
+    // }
 }
 
 int Ranging()
 {
+    // double csb module version
+    uint32_t dist_mm1 = csb_get_distance();
+    HAL_Delay(3);
+    uint32_t dist_mm2 = csb2_get_distance();
+    int delta = (signed)dist_mm1 - (signed)dist_mm2;
+    if (dist_mm1 < 300 || dist_mm2 < 300) {
+        return -1;
+    } else if (dist_mm1 > 400 || dist_mm2 > 400) {
+        return 1;
+    }
+    if (delta > 20) {
+        return 1;
+    } else if (delta < -20) {
+        return -1;
+    }
+
+    /*
     GoRight();
     uint32_t dist_mm1 = csb_get_distance();
     TIM1_Delay_us(100 * 1000);          // 100 ms
     uint32_t dist_mm2 = csb_get_distance();
     if (dist_mm1 < dist_mm2) return 1;
     else return -1;
+    */
     return 0;
 }
 
 void Run2()
 {
+    // GoRight();
+    // return;
     int t = Ranging();
-    if(t == 0) { GoRight(); HAL_Delay(50); }
+    if(t == 0) { GoRight(); HAL_Delay(200); }
     //Ranging()是第二阶段超声测距函数，用于比较车前后与挡板距离
     else if(t == 1) {
         AdjustR();//越来越远
-        HAL_Delay(100);
+        HAL_Delay(50);
     } else if(t == -1) {
         AdjustL();//反之
-        HAL_Delay(100);
+        HAL_Delay(50);
     }
 }
 

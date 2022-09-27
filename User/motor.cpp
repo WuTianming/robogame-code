@@ -281,10 +281,11 @@ void Class_Motor_With_Hall_Encoder::Calculate_TIM_PeriodElapsedCallback()
     Angle_Now += (float)delta / MOTOR_ENCODER_NUM_PER_RAD;
     //计算速度
     Omega_Now = (float)delta / MOTOR_ENCODER_NUM_PER_RAD / MOTOR_CALCULATE_PERIOD;
-    float Omega_unfiltered = (float)(Hall_Encoder_Count - Prev_Hall_Encoder_Count) / MOTOR_ENCODER_NUM_PER_RAD / MOTOR_CALCULATE_PERIOD;
-    char buf[40];
-    int len = sprintf(buf, "/*%.6f,%.6f", Omega_Now, Omega_Target);
-    HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
+    // float Omega_unfiltered = (float)(Hall_Encoder_Count - Prev_Hall_Encoder_Count) / MOTOR_ENCODER_NUM_PER_RAD / MOTOR_CALCULATE_PERIOD;
+
+    // char buf[40];
+    // int len = sprintf(buf, "/*%.6f,%.6f", Omega_Now, Omega_Target);
+    // HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
     Prev_Hall_Encoder_Count = Hall_Encoder_Count;
 
     if(Control_Method == Control_Method_OPENLOOP) {
@@ -317,8 +318,8 @@ void Class_Motor_With_Hall_Encoder::Calculate_TIM_PeriodElapsedCallback()
     } else if (Out > MOTOR_CALCULATE_PRESCALER) {
         Out = MOTOR_CALCULATE_PRESCALER;
     }
-    len = sprintf(buf, ",%f,%f,%f*/\n", Out / 1000.0f, Omega_Now, Omega_unfiltered);
-    HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
+    // len = sprintf(buf, ",%f,%f,%f*/\n", Out / 1000.0f, Omega_Now, Omega_unfiltered);
+    // HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
 }
 
 /*

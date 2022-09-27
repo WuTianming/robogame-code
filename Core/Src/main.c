@@ -40,6 +40,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ACTUATOR_HAL_DELAY 2300
+
 void actuator_up() {
   HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_SET);
@@ -78,6 +80,7 @@ void SystemClock_Config(void);
 
 Class_Chassis car;
 Class_Steer   claw;
+Class_Motor   shooter;
 
 /* USER CODE END 0 */
 
@@ -122,6 +125,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   car.Init();
   claw.Init(&htim8, TIM_CHANNEL_1);
+  shooter.Init(&htim8, TIM_CHANNEL_3, TIM_CHANNEL_4);
+  shooter.Set_Motor_PWM_Period(10000);
+  shooter.Set_Rotate_Direction_Flag(CCW);
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
@@ -133,21 +139,69 @@ int main(void)
   vel.Y = 0;
   // car.Set_DR16(true);
   car.Set_DR16(false);
-  car.Set_Control_Method(Control_Method_OPENLOOP);
+  // car.Set_Control_Method(Control_Method_OPENLOOP);
+  car.Set_Control_Method(Control_Method_OMEGA);
 
-  while (1) {}
+  // while (1) {}
 
-  while (1) {
-    actuator_up();
-    HAL_Delay(2300);
-    actuator_stop();
-    actuator_down();
-    HAL_Delay(1150);
-    actuator_stop();
-    HAL_Delay(700);
-    actuator_down();
-    HAL_Delay(1150);
+  while (true) {
+    Run2();
   }
+
+  /*
+  // 发射冰壶
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY * 1.5);
+  actuator_stop();
+  while (1) {
+    // shooter.Set_Out(6000);
+    // shooter.Output();
+    // HAL_Delay(1000);
+    // HAL_Delay(1000);
+    HAL_Delay(50);
+    shooter.Set_Out(9999);
+    shooter.Output();
+    HAL_Delay(300);
+    shooter.Set_Out(0);
+    shooter.Output();
+    while (1);
+
+    shooter.Set_Out(-6000);
+    shooter.Output();
+    // HAL_Delay(1000);
+    // HAL_Delay(1000);
+    HAL_Delay(300);
+  }
+  */
+
+  /*
+  // 用来走黑线拍视频的
+  while (1) {
+    if ((CS00000) || (CS10000)) {
+      AdjustR();
+      HAL_Delay(300);
+    }
+    Run1();
+  }
+  */
+
+/*
+  // 测试升降
+  while (1) {
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    while (1);
+
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
+    actuator_stop();
+
+    HAL_Delay(300);
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
+  }
+  */
 
 /*
   Run12();
@@ -165,14 +219,58 @@ int main(void)
   }
 */
 
+/*
   while (1) {
     const char *s = "heartbeartttt\n";
     HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
-    claw.open();
-    HAL_Delay(2000);
-    claw.close();
-    HAL_Delay(3000);
+    char ss[40];
+    int len = sprintf(ss, "%d\n", csb_get_distance());
+    HAL_USART_Transmit(&husart1, (const uint8_t *)ss, len, 100);
   }
+  */
+
+  /*
+  // 平地抓壶
+  while (1) {
+    claw.open();
+    HAL_Delay(1000);
+    claw.close();
+    HAL_Delay(1000);
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+  }
+  */
+
+  /*
+  // 高度抓壶
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  claw.open();
+  HAL_Delay(ACTUATOR_HAL_DELAY / 4);
+  while (1) {
+    claw.open();
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 5);
+    actuator_stop();
+    claw.close();
+    HAL_Delay(500);
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 3);
+    actuator_stop();
+    HAL_Delay(500);
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 5);
+    actuator_stop();
+    claw.open();
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 3);
+    actuator_stop();
+  }
+  */
 
   while (1)
   {
