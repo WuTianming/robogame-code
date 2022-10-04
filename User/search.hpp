@@ -90,9 +90,9 @@
 //红外巡线的五个输入
 # define LL1_IN  HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2)
 # define L1_IN   HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)
-# define M1_IN   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_3)
+# define M1_IN   HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_9)
 # define R1_IN   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_5)
-# define RR1_IN  HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_12)
+# define RR1_IN  HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_13)
 
 # define LL2_IN  HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_5)
 # define L2_IN   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2)
@@ -116,6 +116,10 @@ int Recognize(void);   //识别
 void Capture(void);  //抓取
 void Cast(void);	//投掷
 void GoForward(void);	//直行
+void GoBackward(void);
+void GoRight(float);
+void GoLeft(void);
+void RRotate(float);
 void AdjustR(void);		//向右小角度调整
 void AdjustL(void);		//向左小角度调整
 void Stop(void);		//停止

@@ -22,10 +22,14 @@ extern Class_Chassis car;
 
 /* Funcion prototypes  -------------------------------------------------------*/
 
+const float fb_vel = 0.4;
+const float lr_vel = 0.4;
+const float rvel   = 1;
+
 void GoForward() {
     SpeedTypeDef vel;
     vel.Omega = 0;
-    vel.Y = 0.4;
+    vel.Y = fb_vel;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -33,7 +37,31 @@ void GoForward() {
 void GoBackward() {
     SpeedTypeDef vel;
     vel.Omega = 0;
-    vel.Y = -0.4;
+    vel.Y = -fb_vel;
+    vel.X = 0.0;
+    car.Set_Velocity(vel);
+}
+
+void GoLeft() {
+    SpeedTypeDef vel;
+    vel.Omega = 0;
+    vel.Y = 0.0;
+    vel.X = -lr_vel;
+    car.Set_Velocity(vel);
+}
+
+void GoRight(float vv = lr_vel) {
+    SpeedTypeDef vel;
+    vel.Omega = 0;
+    vel.Y = 0.0;
+    vel.X = vv;
+    car.Set_Velocity(vel);
+}
+
+void RRotate(float vv = rvel) {
+    SpeedTypeDef vel;
+    vel.Omega = -vv;
+    vel.Y = 0.0;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -82,22 +110,6 @@ void AdjustF() {
 
 void AdjustB() {
     ;
-}
-
-void GoLeft() {
-    SpeedTypeDef vel;
-    vel.Omega = 0;
-    vel.Y = 0.0;
-    vel.X = -0.3;
-    car.Set_Velocity(vel);
-}
-
-void GoRight() {
-    SpeedTypeDef vel;
-    vel.Omega = 0;
-    vel.Y = 0.0;
-    vel.X = 0.3;
-    car.Set_Velocity(vel);
 }
 
 #define CONT 0
@@ -249,48 +261,44 @@ void Run3_new()
 
 }
 
+#define ALONG_THE_LINE ((CS10011) || (CS11001) || (CS10001))
+
 void Run12() {
     // 先越过开始区的一坨黑线
-    for (int i = 0; i < 100; i++) {
-        Run1();
-    }
+    Run1();
+    HAL_Delay(2000);
     // 再走直线直到第一个转弯
     while (true) {
         Run1();
-        if ((CS10000) || (CS00000)) {
-            break;
-        }
+        if ((CS10000) || (CS00000)) { break; }
     }
     // 再开始往右平移
-    for (int i = 0; i < 100; i++) {
-        i = 2;      // while 1
-        GoRight();
-    }
-    while (true) {
-        Run2();
-    }
+    GoRight(1.0);
+    HAL_Delay(5200);
+    // GoRight(0.3);
+    // while (LL2_IN + L2_IN + M2_IN + R2_IN + RR2_IN >= 1) {}
+    GoRight(0.3);
+    while (!ALONG_THE_LINE) {}
+    Stop();
+
+    RRotate(3);
+    HAL_Delay(2300);  // 180度
+    RRotate(0.5);
+    while (!ALONG_THE_LINE) {}
+    Stop();
 }
 
 void Run1()
 {
-    if((CS10011) || (CS11001) || (CS10001) || (CS11011))
-    {
+    if((CS10011) || (CS11001) || (CS10001) || (CS11011)) {
         GoForward();
-        // HAL_Delay(20);
-    }
-    else if((CS11000) || (CS11100))
-    {
+    } else if((CS11000) || (CS11100)) {
         AdjustR();
         HAL_Delay(40);
-    }
-    else if((CS00011) || (CS00111))
-    {
+    } else if((CS00011) || (CS00111)) {
         AdjustL();
         HAL_Delay(40);
     }
-    // else {
-    //     Stop();
-    // }
 }
 
 int Ranging()

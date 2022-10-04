@@ -138,6 +138,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
+  // while (1);
+
+if(0)
+  while (1) {
+    if (RR1_IN == 0) {
+      vel.X = 0.3;
+    } else {
+      vel.X = 0;
+    }
+    car.Set_Velocity(vel);
+  }
 
   // while (1) {}
 
@@ -172,9 +183,8 @@ int main(void)
   */
 
   // 走黑线
-  while (1) {
-    Run12();
-  }
+  Run12();
+  while (1);
 
 /*
   // 测试升降
