@@ -124,6 +124,9 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
+  // car.Set_Control_Method(Control_Method_OPENLOOP);
+  car.Set_Control_Method(Control_Method_OMEGA);
+  car.Set_DR16(true);
   claw.Init(&htim8, TIM_CHANNEL_1);
   shooter.Init(&htim8, TIM_CHANNEL_3, TIM_CHANNEL_4);
   shooter.Set_Motor_PWM_Period(10000);
@@ -134,19 +137,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   SpeedTypeDef vel;
-  vel.Omega = 0;
-  vel.X = 0;
-  vel.Y = 0;
-  // car.Set_DR16(true);
-  car.Set_DR16(false);
-  // car.Set_Control_Method(Control_Method_OPENLOOP);
-  car.Set_Control_Method(Control_Method_OMEGA);
+  vel.Omega = 0; vel.X = 0; vel.Y = 0;
 
   // while (1) {}
 
-  while (true) {
-    Run2();
-  }
+  // while (true) {
+  //   Run2();
+  // }
 
   /*
   // 发射冰壶
@@ -174,16 +171,10 @@ int main(void)
   }
   */
 
-  /*
-  // 用来走黑线拍视频的
+  // 走黑线
   while (1) {
-    if ((CS00000) || (CS10000)) {
-      AdjustR();
-      HAL_Delay(300);
-    }
-    Run1();
+    Run12();
   }
-  */
 
 /*
   // 测试升降

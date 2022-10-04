@@ -84,11 +84,12 @@ void Class_Chassis::Init()
     //电机PID初始化
     for(int i = 0; i < 4; i++) {
         // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, 1000, 1000);
-        Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
-        Motor[i].Omega_PID.Init(400, 2000, 0, 20000, 20000);
-        // Motor[i].Omega_PID.Init(1800, 3000, 0, 20000, 4000);
+        // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
+        // Motor[i].Omega_PID.Init(1000, 1000, 0, 4000, 20000);
+        Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 20000);     // 小速度很好
+        // Motor[i].Omega_PID.Init(1800, 3000, 0, 4000, 4000);
         // Motor[i].Omega_PID.Init(1300, 2000, 0, 20000, 10000);
-        // Motor[i].Omega_PID.Init(1400, 1000, 0, 20000, 10000);        // this is really good
+        // Motor[i].Omega_PID.Init(1400, 1000, 0, 4000, 10000);        // this is really good
         // Motor[i].Omega_PID.Init(1400, 1000, 0, 20000, 10000);
         Motor[i].Omega_PID.Set_Dead_Zone(0.3);
         Motor[i].Set_Control_Method(Control_Method_OMEGA);
@@ -180,7 +181,14 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
     //遥控器处理
     if (use_dr16) {
         DR16.Process_TIM_PeriodElapsedCallback();
-        Velocity = DR16.Get_Velocity();
+        Enum_DR16_Control_Mode M = DR16.Get_DR16_Control_Mode();
+        if (M == DR16_CONTROL_MODE_FORCE) {
+            Velocity = DR16.Get_Velocity();
+        } else if (M == DR16_CONTROL_MODE_ON) {
+            SpeedTypeDef v = DR16.Get_Velocity();
+            if (v.Omega != 0 || v.X != 0 || v.Y != 0)
+                Velocity = v;
+        }
     }
 
     Math_Constrain(&Velocity.X, -X_MAX, X_MAX);

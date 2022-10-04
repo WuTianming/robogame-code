@@ -113,14 +113,18 @@ void Class_DR16::Process_TIM_PeriodElapsedCallback()
 {
     //状态检测
     Data.Left_DIP = static_cast<Enum_DR16_DIP_Status>(((Pack[5] >> 4) & 0x000C) >> 2);
-    if(Data.Left_DIP == DR16_DIP_STATUS_DOWN) {
-        DR16_Control_Mode = DR16_CONTROL_MODE_OFF;
-    } else if(Data.Left_DIP == DR16_DIP_STATUS_MIDDLE || Data.Left_DIP == DR16_DIP_STATUS_UP) {
+    if (Receive_Window < 10) {
         DR16_Control_Mode = DR16_CONTROL_MODE_ON;
+    } else if(Data.Left_DIP == DR16_DIP_STATUS_DOWN) {
+        DR16_Control_Mode = DR16_CONTROL_MODE_OFF;              // 遥控器无效，转自动控制
+    } else if(Data.Left_DIP == DR16_DIP_STATUS_MIDDLE) {
+        DR16_Control_Mode = DR16_CONTROL_MODE_ON;               // 当遥控器有动作时才控制
+    } else if(Data.Left_DIP == Data.Left_DIP == DR16_DIP_STATUS_UP) {
+        DR16_Control_Mode = DR16_CONTROL_MODE_FORCE;            // 完全遥控器
     }
 
     //速度确认
-    if(DR16_Control_Mode == DR16_CONTROL_MODE_OFF || Data.Left_DIP == DR16_DIP_STATUS_DOWN) {
+    if(DR16_Control_Mode == DR16_CONTROL_MODE_OFF || Receive_Window < 10) {
         Velocity.X = 0;
         Velocity.Y = 0;
         Velocity.Omega = 0;

@@ -44,7 +44,8 @@ enum Enum_DR16_DIP_Status
 enum Enum_DR16_Control_Mode
 {
     DR16_CONTROL_MODE_ON = 0,
-    DR16_CONTROL_MODE_OFF
+    DR16_CONTROL_MODE_OFF,
+    DR16_CONTROL_MODE_FORCE
 };
 
 /**

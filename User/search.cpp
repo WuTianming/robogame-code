@@ -25,8 +25,15 @@ extern Class_Chassis car;
 void GoForward() {
     SpeedTypeDef vel;
     vel.Omega = 0;
-    // vel.Y = 0.3;
     vel.Y = 0.4;
+    vel.X = 0.0;
+    car.Set_Velocity(vel);
+}
+
+void GoBackward() {
+    SpeedTypeDef vel;
+    vel.Omega = 0;
+    vel.Y = -0.4;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -39,21 +46,33 @@ void Stop() {
     car.Set_Velocity(vel);
 }
 
+#define INCREMENTAL
+
 void AdjustR() {
     SpeedTypeDef vel;
+#ifdef INCREMENTAL
+    vel = car.Get_Velocity();
+    vel.Omega = -0.4;
+#else
     vel.Omega = -0.4;
     // vel.Y = 0.3;
     vel.Y = 0.0;
     vel.X = 0.0;
+#endif
     car.Set_Velocity(vel);
 }
 
 void AdjustL() {
     SpeedTypeDef vel;
+#ifdef INCREMENTAL
+    vel = car.Get_Velocity();
+    vel.Omega = 0.4;
+#else
     vel.Omega = 0.4;
     // vel.Y = 0.3;
     vel.Y = 0.0;
     vel.X = 0.0;
+#endif
     car.Set_Velocity(vel);
 }
 
@@ -63,6 +82,14 @@ void AdjustF() {
 
 void AdjustB() {
     ;
+}
+
+void GoLeft() {
+    SpeedTypeDef vel;
+    vel.Omega = 0;
+    vel.Y = 0.0;
+    vel.X = -0.3;
+    car.Set_Velocity(vel);
 }
 
 void GoRight() {
@@ -76,6 +103,152 @@ void GoRight() {
 #define CONT 0
 #define NEXT 1
 
+void Run3_new()
+{
+    //突然想到一个点，可以抓一个壶的同时投一个壶，可以节省时间
+    // notice the original status, the car's orientation
+    int status[5],idx=0;
+    int i=0,j=0;
+    for(;idx<2;)
+    {
+        while(!(CS11001)||!(CS10001)||!(CS10011))
+        {
+            GoLeft();   // need to complete
+        }
+        status[idx] = Recognize();idx++;
+        while(!(CS00000))
+        {
+            GoLeft();
+        }
+    }
+    for(i=0; i<2;)
+    {
+        GoLeft();
+        HAL_Delay(300);
+        if((CS11001)||(CS10001)||(CS10011)) i++;
+    }
+    Cast();
+
+    if(status[1] == 1)
+    {
+        for(i=0; i<2;)
+        {
+            GoRight();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) i++;
+        }
+        Capture();
+        for(i=0; i<2;)
+        {
+            GoLeft();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) i++;
+        }
+        Cast();
+    }
+    if(status[0] == 1)
+    {
+        for(i=0; i<3;)
+        {
+            GoRight();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) i++;
+        }
+        Capture();
+        for(i=0; i<3;)
+        {
+            GoLeft();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) i++;
+        }
+        Cast();
+    }
+    
+    // 开始检测台阶上的壶
+
+    while(!(CS_R11001)||!(CS_R10001)||!(CS_R10011)) GoBackward();
+    for(j=0; j<2;)
+    {
+        AdjustR();
+        HAL_Delay(300);
+        if((CS11001)||(CS10001)||(CS10011)) j++;
+    }
+
+    status[3] = Recognize();
+    
+    GoRight();
+    HAL_Delay(300);
+    while (!(CS11001)||!(CS10001)||!(CS10011)) GoRight();
+
+    status[4] = Recognize();
+    for(i=0; i<2;)
+    {
+        GoLeft();
+        HAL_Delay(300);
+        if((CS11001)||(CS10001)||(CS10011)) i++;
+    }
+    status[2] = Recognize();
+    
+    if(status[2])
+    {
+        Capture();
+        GoRight();
+        HAL_Delay(300);
+        while (!(CS11001)||!(CS10001)||!(CS10011)) GoRight();
+        AdjustR();
+        HAL_Delay(300);
+        while (!(CS11001)||!(CS10001)||!(CS10011)) AdjustR();
+        Cast();
+
+        while(!(CS_R11001)||!(CS_R10001)||!(CS_R10011)) GoBackward();
+        for(j=0; j<2;)
+        {
+            AdjustR();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) j++;
+        }
+    }
+    else
+    {
+        GoRight();
+        HAL_Delay(300);
+        while (!(CS11001)||!(CS10001)||!(CS10011)) GoRight();
+    }
+    
+
+    if(status[3])
+    {
+        Capture();
+        while(!(CS11001)||!(CS10001)||!(CS10011)) AdjustR();
+        while(!(CS_R11001)||!(CS_R10001)||!(CS_R10011)) GoForward();
+        Cast();
+
+        while(!(CS_R11001)||!(CS_R10001)||!(CS_R10011)) GoBackward();
+        for(j=0; j<2;)
+        {
+            AdjustR();
+            HAL_Delay(300);
+            if((CS11001)||(CS10001)||(CS10011)) j++;
+        }
+    }
+    
+    if(status[4])
+    {
+        GoRight();
+        HAL_Delay(300);
+        while (!(CS11001)||!(CS10001)||!(CS10011)) GoRight();
+        Capture();
+        GoLeft();
+        HAL_Delay(300);
+        while (!(CS11001)||!(CS10001)||!(CS10011)) GoLeft();
+        AdjustR();
+        HAL_Delay(300);
+        while(!(CS11001)||!(CS10001)||!(CS10011)) AdjustR();
+        Cast();
+    }
+
+}
+
 void Run12() {
     // 先越过开始区的一坨黑线
     for (int i = 0; i < 100; i++) {
@@ -84,12 +257,13 @@ void Run12() {
     // 再走直线直到第一个转弯
     while (true) {
         Run1();
-        if ((CS10000)) {
+        if ((CS10000) || (CS00000)) {
             break;
         }
     }
     // 再开始往右平移
     for (int i = 0; i < 100; i++) {
+        i = 2;      // while 1
         GoRight();
     }
     while (true) {
@@ -102,17 +276,17 @@ void Run1()
     if((CS10011) || (CS11001) || (CS10001) || (CS11011))
     {
         GoForward();
-        HAL_Delay(20);
+        // HAL_Delay(20);
     }
     else if((CS11000) || (CS11100))
     {
         AdjustR();
-        HAL_Delay(50);
+        HAL_Delay(40);
     }
     else if((CS00011) || (CS00111))
     {
         AdjustL();
-        HAL_Delay(50);
+        HAL_Delay(40);
     }
     // else {
     //     Stop();
