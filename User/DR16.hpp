@@ -86,6 +86,7 @@ class Class_DR16
         void Init(UART_HandleTypeDef *huart);
 
         int Get_Actuator();
+        int Get_Shooter();
         SpeedTypeDef Get_Velocity();
         Enum_DR16_Control_Mode Get_DR16_Control_Mode();
         uint32_t Get_Receive_Window();
@@ -111,6 +112,7 @@ class Class_DR16
             0
         };
         int actuator = 0;
+        int shooter  = 0;
         Enum_DR16_Control_Mode DR16_Control_Mode = DR16_CONTROL_MODE_OFF;
 
 };

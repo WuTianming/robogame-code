@@ -111,6 +111,8 @@ void Error_Handler(void);
 #define m4r_pwm_GPIO_Port GPIOB
 #define DR16_RX_Pin GPIO_PIN_0
 #define DR16_RX_GPIO_Port GPIOE
+#define Servo_Pin GPIO_PIN_5
+#define Servo_GPIO_Port GPIOI
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

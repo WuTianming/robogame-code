@@ -17,6 +17,7 @@
 #include "main.h"
 #include "Motor.hpp"
 #include "DR16.hpp"
+#include "Steer.hpp"
 
 /* Exported macros -----------------------------------------------------------*/
 
@@ -71,6 +72,7 @@ class Class_Chassis
 
         // 遥控器可以控制shooter
         Class_Motor *Shooter;
+        Class_Steer *claw;
 
         void Init();        // arguments implicitly contained in the function
 

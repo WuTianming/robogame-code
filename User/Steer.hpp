@@ -44,7 +44,11 @@ class Class_Steer
 
         void open();
 
+        int getstate();
+
     protected:
+
+        int state = 0;      // 0 closed, 1 open
 
         //舵机驱动定时器编号
         TIM_HandleTypeDef *Driver_PWM_TIM;

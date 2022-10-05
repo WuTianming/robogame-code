@@ -124,14 +124,16 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
-  // car.Set_Control_Method(Control_Method_OPENLOOP);
-  car.Set_Control_Method(Control_Method_OMEGA);
+  car.Set_Control_Method(Control_Method_OPENLOOP);
+  // car.Set_Control_Method(Control_Method_OMEGA);
   car.Set_DR16(true);
+  // car.Set_DR16(false);
   claw.Init(&htim8, TIM_CHANNEL_1);
   shooter.Init(&htim8, TIM_CHANNEL_3, TIM_CHANNEL_4);
   shooter.Set_Motor_PWM_Period(10000);
   shooter.Set_Rotate_Direction_Flag(CCW);
   car.Shooter = &shooter;
+  // car.claw = &claw;
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
@@ -139,8 +141,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
-  // while (1);
 
+  // 检查巡线模块
 if(0)
   while (1) {
     if (RR1_IN == 0) {
@@ -183,9 +185,11 @@ if(0)
   }
   */
 
-  // 走黑线
+  // 三审
+  /*
   Run12();
   while (1);
+  */
 
 /*
   // 测试升降
@@ -231,8 +235,9 @@ if(0)
   }
   */
 
-  /*
+  // /*
   // 平地抓壶
+  // while (1);
   while (1) {
     claw.open();
     HAL_Delay(1000);
@@ -245,7 +250,7 @@ if(0)
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
   }
-  */
+  // */
 
   /*
   // 高度抓壶

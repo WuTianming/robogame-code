@@ -95,21 +95,22 @@ void Class_Steer::Output()
 
 void Class_Steer::close()
 {
-    Set_Out(1100);
-    Output();
-    HAL_Delay(200);
     Set_Out(1010);
     Output();
     HAL_Delay(200);
+    state = 0;
 }
 
 void Class_Steer::open()
 {
-    // Set_Out(750);
-    // Set_Out(800);
-    Set_Out(500);
+    Set_Out(900);
     Output();
     HAL_Delay(200);
+    state = 1;
+}
+
+int Class_Steer::getstate() {
+    return state;
 }
 
 /* Function prototypes -------------------------------------------------------*/

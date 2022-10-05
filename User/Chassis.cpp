@@ -191,15 +191,38 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
                 Velocity = v;
         }
 
-        if (DR16.Get_Actuator() == 1) {
+        int shooter = DR16.Get_Shooter();
+        int actuator = DR16.Get_Actuator();
+        if (shooter == 1) {
             Shooter->Set_Out(9999);
             Shooter->Output();
-        } else if (DR16.Get_Actuator() == -1) {
+        } else if (shooter == -1) {
             Shooter->Set_Out(-1000);
             Shooter->Output();
         } else {
             Shooter->Set_Out(0);
             Shooter->Output();
+        }
+        
+    if (0)
+        if (actuator == 1) {
+            // up
+            if (claw->getstate() == 1) {
+                claw->close();
+            }
+            HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_SET);
+        } else if (actuator < 0) {
+            // down
+            HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
+            if (actuator == -2 && claw->getstate() == 0) {
+                // claw->open();
+            }
+        } else {
+            // stop
+            HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
         }
     }
 
