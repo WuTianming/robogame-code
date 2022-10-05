@@ -57,13 +57,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define actuator2_Pin GPIO_PIN_7
+#define actuator2_GPIO_Port GPIOF
+#define actuator1_Pin GPIO_PIN_8
+#define actuator1_GPIO_Port GPIOF
 #define m1_yellow_Pin GPIO_PIN_1
 #define m1_yellow_GPIO_Port GPIOC
 #define m1_yellow_EXTI_IRQn EXTI1_IRQn
-#define actuator1_Pin GPIO_PIN_2
-#define actuator1_GPIO_Port GPIOH
-#define actuator2_Pin GPIO_PIN_3
-#define actuator2_GPIO_Port GPIOH
 #define m2_yellow_Pin GPIO_PIN_6
 #define m2_yellow_GPIO_Port GPIOA
 #define m2_yellow_EXTI_IRQn EXTI9_5_IRQn

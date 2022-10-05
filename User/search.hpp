@@ -115,7 +115,7 @@ void Run3(void);    //阶段三，开启巡线模块，识别、投壶
 int Recognize(void);   //识别
 void Capture(void);  //抓取
 void Cast(void);	//投掷
-void GoForward(void);	//直行
+void GoForward(float);	//直行
 void GoBackward(void);
 void GoRight(float);
 void GoLeft(void);

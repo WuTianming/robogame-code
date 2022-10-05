@@ -26,10 +26,10 @@ const float fb_vel = 0.4;
 const float lr_vel = 0.4;
 const float rvel   = 1;
 
-void GoForward() {
+void GoForward(float v=fb_vel) {
     SpeedTypeDef vel;
     vel.Omega = 0;
-    vel.Y = fb_vel;
+    vel.Y = v;
     vel.X = 0.0;
     car.Set_Velocity(vel);
 }
@@ -61,6 +61,14 @@ void GoRight(float vv = lr_vel) {
 void RRotate(float vv = rvel) {
     SpeedTypeDef vel;
     vel.Omega = -vv;
+    vel.Y = 0.0;
+    vel.X = 0.0;
+    car.Set_Velocity(vel);
+}
+
+void LRotate(float vv = rvel) {
+    SpeedTypeDef vel;
+    vel.Omega = vv;
     vel.Y = 0.0;
     vel.X = 0.0;
     car.Set_Velocity(vel);
@@ -112,8 +120,9 @@ void AdjustB() {
     ;
 }
 
-#define CONT 0
-#define NEXT 1
+int Recognize() {
+    return 0;
+}
 
 void Run3_new()
 {
@@ -125,9 +134,9 @@ void Run3_new()
     {
         while(!(CS11001)||!(CS10001)||!(CS10011))
         {
-            GoLeft();   // need to complete
+            GoLeft();
         }
-        status[idx] = Recognize();idx++;
+        status[idx] = Recognize(); idx++;
         while(!(CS00000))
         {
             GoLeft();
@@ -262,30 +271,73 @@ void Run3_new()
 }
 
 #define ALONG_THE_LINE ((CS10011) || (CS11001) || (CS10001))
+// #define ALONG_THE_LINE_R ((CS_R10011) || (CS_R11001) || (CS_R10001))
+#define ALONG_THE_LINE_R (!M2_IN && (!M2_IN || !R2_IN))
 
 void Run12() {
+    // goto qwq;
     // 先越过开始区的一坨黑线
-    Run1();
-    HAL_Delay(2000);
+    for (int i = 0; i < 100; i++) {
+        Run1();
+        HAL_Delay(10);
+    }
     // 再走直线直到第一个转弯
     while (true) {
         Run1();
         if ((CS10000) || (CS00000)) { break; }
     }
     // 再开始往右平移
+    // 比赛场地：5.85m
     GoRight(1.0);
-    HAL_Delay(5200);
+    // HAL_Delay(5200);    // 实际走了3.6m
+    HAL_Delay(4000);
+    SpeedTypeDef vel;
+    vel.Omega = 0; vel.Y = 1; vel.X = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(1000);
+    vel.Omega = 1; vel.Y = 0; vel.X = 0;
+    car.Set_Velocity(vel);
+    HAL_Delay(300);
+    GoRight(1.0);
+    HAL_Delay(3800);    // 5.8m
     // GoRight(0.3);
     // while (LL2_IN + L2_IN + M2_IN + R2_IN + RR2_IN >= 1) {}
-    GoRight(0.3);
+qwq:
+    GoRight(0.5);
     while (!ALONG_THE_LINE) {}
+    // GoBackward();
+    // HAL_Delay(1000);
     Stop();
+
+    // for (int i = 0; i < 100; i++) {
+    //     Run1();
+    //     HAL_Delay(3);
+    // }
+    // Stop();
 
     RRotate(3);
     HAL_Delay(2300);  // 180度
     RRotate(0.5);
     while (!ALONG_THE_LINE) {}
     Stop();
+    for (int i = 0; i < 500; i++) {
+        Run1();
+        HAL_Delay(10);
+    }
+
+    // LRotate(3);
+    // HAL_Delay(900);
+    // Stop();
+    // GoForward(0.7);
+    // HAL_Delay(250);
+    // Stop();
+    // LRotate(0.5);
+    // while (!ALONG_THE_LINE_R) {}
+    // Stop();
+
+    // GoLeft();
+    // HAL_Delay(3000);
+    // Stop();
 }
 
 void Run1()
@@ -296,6 +348,19 @@ void Run1()
         AdjustR();
         HAL_Delay(40);
     } else if((CS00011) || (CS00111)) {
+        AdjustL();
+        HAL_Delay(40);
+    }
+}
+
+void Run1R()
+{
+    if((CS_R10011) || (CS_R11001) || (CS_R10001) || (CS_R11011)) {
+        GoRight();
+    } else if((CS_R11000) || (CS_R11100)) {
+        AdjustR();
+        HAL_Delay(40);
+    } else if((CS_R00011) || (CS_R00111)) {
         AdjustL();
         HAL_Delay(40);
     }

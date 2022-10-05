@@ -55,9 +55,11 @@ enum Enum_DR16_Control_Mode
 struct DR16_Data
 {
     uint16_t Right_X;
+    uint16_t Right_Y;
     uint16_t Left_X;
     uint16_t Left_Y;
     Enum_DR16_DIP_Status Left_DIP;
+    Enum_DR16_DIP_Status Right_DIP;
 };
 
 /**
@@ -83,6 +85,7 @@ class Class_DR16
 
         void Init(UART_HandleTypeDef *huart);
 
+        int Get_Actuator();
         SpeedTypeDef Get_Velocity();
         Enum_DR16_Control_Mode Get_DR16_Control_Mode();
         uint32_t Get_Receive_Window();
@@ -107,6 +110,7 @@ class Class_DR16
             0,
             0
         };
+        int actuator = 0;
         Enum_DR16_Control_Mode DR16_Control_Mode = DR16_CONTROL_MODE_OFF;
 
 };

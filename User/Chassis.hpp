@@ -69,6 +69,9 @@ class Class_Chassis
         //底盘对应的遥控器
         Class_DR16 DR16;
 
+        // 遥控器可以控制shooter
+        Class_Motor *Shooter;
+
         void Init();        // arguments implicitly contained in the function
 
         void Set_Velocity(SpeedTypeDef __Velocity);

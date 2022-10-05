@@ -86,7 +86,8 @@ void Class_Chassis::Init()
         // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, 1000, 1000);
         // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
         // Motor[i].Omega_PID.Init(1000, 1000, 0, 4000, 20000);
-        Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 20000);     // 小速度很好
+        Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 20000);     // king 22.10.5
+        // Motor[i].Omega_PID.Init(1200, 300, 0, 10000, 20000);     // test
         // Motor[i].Omega_PID.Init(1800, 3000, 0, 4000, 4000);
         // Motor[i].Omega_PID.Init(1300, 2000, 0, 20000, 10000);
         // Motor[i].Omega_PID.Init(1400, 1000, 0, 4000, 10000);        // this is really good
@@ -188,6 +189,17 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
             SpeedTypeDef v = DR16.Get_Velocity();
             if (v.Omega != 0 || v.X != 0 || v.Y != 0)
                 Velocity = v;
+        }
+
+        if (DR16.Get_Actuator() == 1) {
+            Shooter->Set_Out(9999);
+            Shooter->Output();
+        } else if (DR16.Get_Actuator() == -1) {
+            Shooter->Set_Out(-1000);
+            Shooter->Output();
+        } else {
+            Shooter->Set_Out(0);
+            Shooter->Output();
         }
     }
 

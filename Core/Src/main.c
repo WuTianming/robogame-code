@@ -131,6 +131,7 @@ int main(void)
   shooter.Init(&htim8, TIM_CHANNEL_3, TIM_CHANNEL_4);
   shooter.Set_Motor_PWM_Period(10000);
   shooter.Set_Rotate_Direction_Flag(CCW);
+  car.Shooter = &shooter;
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
@@ -192,9 +193,9 @@ if(0)
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
-    while (1);
+    // while (1);
 
-    actuator_down();
+    actuator_up();
     HAL_Delay(ACTUATOR_HAL_DELAY / 2);
     actuator_stop();
 
