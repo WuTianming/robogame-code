@@ -2,3 +2,4 @@ build/
 *.swp
 .DS_Store
 .vscode/
+STM32Make.make
