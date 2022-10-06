@@ -57,10 +57,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define actuator2_Pin GPIO_PIN_7
-#define actuator2_GPIO_Port GPIOF
-#define actuator1_Pin GPIO_PIN_8
-#define actuator1_GPIO_Port GPIOF
 #define m1_yellow_Pin GPIO_PIN_1
 #define m1_yellow_GPIO_Port GPIOC
 #define m1_yellow_EXTI_IRQn EXTI1_IRQn
@@ -93,6 +89,8 @@ void Error_Handler(void);
 #define m2r_pwm_GPIO_Port GPIOI
 #define CSB2_Echo_Pin GPIO_PIN_15
 #define CSB2_Echo_GPIO_Port GPIOA
+#define visual_rx_Pin GPIO_PIN_11
+#define visual_rx_GPIO_Port GPIOC
 #define CSB_Trig_Pin GPIO_PIN_3
 #define CSB_Trig_GPIO_Port GPIOD
 #define CSB_Echo_Pin GPIO_PIN_7
@@ -113,6 +111,10 @@ void Error_Handler(void);
 #define DR16_RX_GPIO_Port GPIOE
 #define Servo_Pin GPIO_PIN_5
 #define Servo_GPIO_Port GPIOI
+#define actuator2_Pin GPIO_PIN_6
+#define actuator2_GPIO_Port GPIOI
+#define actuator1_Pin GPIO_PIN_7
+#define actuator1_GPIO_Port GPIOI
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -15,6 +15,7 @@
 /* Includes -------------------------------------------------------------------*/
 #include "gpio.h"
 #include "Chassis.hpp"
+#include "Steer.hpp"
 
 /* Exported macros ------------------------------------------------------------*/
 # define BLACK 0    //识别为黑线时低电平
@@ -100,6 +101,15 @@
 # define R2_IN   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_6)
 # define RR2_IN  HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_7)
 
+#define ACTUATOR_HAL_DELAY 2300
+
+extern Class_Chassis car;
+extern Class_Steer claw;
+extern Class_Motor shooter;
+void actuator_up();
+void actuator_down();
+void actuator_stop();
+
 /* Exported types -------------------------------------------------------------*/
 
 /* Exported variables ---------------------------------------------------------*/
@@ -107,9 +117,11 @@
 /* Exported function declarations----------------------------------------------*/
 
 int Ranging(void);
-void Run(void);     //小车总的运行模块
-void Run12(void);
+void RunAll(void);
+void RunAll_Moveleft(void);
 void Run1(void);    //阶段一，直线到第一个转弯
+void Run1Q(void);
+void Run1L(void);
 void Run2(void);    //阶段二，关闭正常巡线模式，通过激光测距确保直行
 void Run3(void);    //阶段三，开启巡线模块，识别、投壶
 int Recognize(void);   //识别
@@ -120,8 +132,8 @@ void GoBackward(void);
 void GoRight(float);
 void GoLeft(void);
 void RRotate(float);
-void AdjustR(void);		//向右小角度调整
-void AdjustL(void);		//向左小角度调整
+void AdjustR(float);		//向右小角度调整
+void AdjustL(float);		//向左小角度调整
 void Stop(void);		//停止
 void TurnR90(void);		//向右转90度
 void TurnL90(void);		//向左转90度

@@ -35,27 +35,26 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+int myAtoi(char* str)
+{
+    // Initialize result
+    int res = 0;
+ 
+    for (int i = 0; str[i] <= '9' && str[i] >= '0'; ++i)
+        res = res * 10 + str[i] - '0';
+ 
+    // return result.
+    return res;
+}
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ACTUATOR_HAL_DELAY 2300
 
-void actuator_up() {
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_SET);
-}
+Class_Chassis car;
+Class_Steer   claw;
+Class_Motor   shooter;
 
-void actuator_down() {
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
-}
-
-void actuator_stop() {
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
-}
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -77,10 +76,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-Class_Chassis car;
-Class_Steer   claw;
-Class_Motor   shooter;
 
 /* USER CODE END 0 */
 
@@ -124,8 +119,8 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
-  car.Set_Control_Method(Control_Method_OPENLOOP);
-  // car.Set_Control_Method(Control_Method_OMEGA);
+  // car.Set_Control_Method(Control_Method_OPENLOOP);
+  car.Set_Control_Method(Control_Method_OMEGA);
   car.Set_DR16(true);
   // car.Set_DR16(false);
   claw.Init(&htim8, TIM_CHANNEL_1);
@@ -142,8 +137,8 @@ int main(void)
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
 
+/*
   // 检查巡线模块
-if(0)
   while (1) {
     if (RR1_IN == 0) {
       vel.X = 0.3;
@@ -152,9 +147,9 @@ if(0)
     }
     car.Set_Velocity(vel);
   }
+*/
 
   // while (1) {}
-
   // while (true) {
   //   Run2();
   // }
@@ -186,10 +181,16 @@ if(0)
   */
 
   // 三审
-  /*
-  Run12();
+  // /*
+  // while (1);
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY*2);
+  actuator_stop();
+  claw.close();
+  // RunAll();
+  RunAll_Moveleft();
   while (1);
-  */
+  // */
 
 /*
   // 测试升降
@@ -235,9 +236,8 @@ if(0)
   }
   */
 
-  // /*
+  /*
   // 平地抓壶
-  // while (1);
   while (1) {
     claw.open();
     HAL_Delay(1000);
@@ -250,7 +250,7 @@ if(0)
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
   }
-  // */
+  */
 
   /*
   // 高度抓壶
@@ -281,36 +281,20 @@ if(0)
 
   while (1)
   {
-    vel.Omega = 0.3f;
-    vel.X = 0;
-    vel.Y = 0;
-    car.Set_Velocity(vel);
-    HAL_Delay(1200);
-    vel.Omega = 0;
-    vel.X = 0;
-    vel.Y = 0;
-    car.Set_Velocity(vel);
-    HAL_Delay(1000);
-    vel.Omega = 0.0f;
-    vel.X = 0.2;
-    vel.Y = 0;
-    car.Set_Velocity(vel);
-    HAL_Delay(1200);
-    vel.Omega = 0;
-    vel.X = 0;
-    vel.Y = 0;
-    car.Set_Velocity(vel);
-    HAL_Delay(1000);
-    vel.Omega = 0.0f;
-    vel.X = 0;
-    vel.Y = 0.2;
-    car.Set_Velocity(vel);
-    HAL_Delay(1200);
-    vel.Omega = 0;
-    vel.X = 0;
-    vel.Y = 0;
-    car.Set_Velocity(vel);
-    HAL_Delay(1000);
+    if (0) {
+      vel.Omega = 0.3f; vel.X = 0; vel.Y = 0;
+      car.Set_Velocity(vel); HAL_Delay(1200);
+      vel.Omega = 0; vel.X = 0; vel.Y = 0;
+      car.Set_Velocity(vel); HAL_Delay(1000);
+      vel.Omega = 0.0f; vel.X = 0.2; vel.Y = 0;
+      car.Set_Velocity(vel); HAL_Delay(1200);
+      vel.Omega = 0; vel.X = 0; vel.Y = 0;
+      car.Set_Velocity(vel); HAL_Delay(1000);
+      vel.Omega = 0.0f; vel.X = 0; vel.Y = 0.2;
+      car.Set_Velocity(vel); HAL_Delay(1200);
+      vel.Omega = 0; vel.X = 0; vel.Y = 0;
+      car.Set_Velocity(vel); HAL_Delay(1000);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
