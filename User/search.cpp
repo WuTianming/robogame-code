@@ -141,24 +141,66 @@ int Recognize() {
     return 0;
 }
 
-void Run3_new()
+void Run_new()
 {
+    // 车辆前面的巡线模块改成两个三路巡线之后
+    // 例 前面左边CS_FL111，前面右边CS_FR111，三路巡线高电平黑线
+    // 车辆左边CS_L111，右边CS_R111，后面CS_B111，五路巡线低电平黑线
+    // 走直线直到第一个转弯
+    while (true) {
+        Run1();
+        if ( !L4_IN && R5_IN) { break; }
+    }
+
+    // 再开始往右平移
+    // 比赛场地：5.85m
+    GoRight(1.0);
+    AdjustL(0.3);       // 左转对冲
+    // HAL_Delay(5200);    // 实际走了3.6m
+    HAL_Delay(100);
+    GoRight(1.0);       // 取消左转对冲
+    HAL_Delay(3800);
+    GoRight(1.0);
+    HAL_Delay(3900);    // 5.8m
+    // GoRight(0.3);
+    // 准备停下来
+    GoRight(0.5); while (!M3_IN && (!L3_IN || !R3_IN)) {} Stop();
+
+    // 卡位
+    while(true){
+        if(L4_IN || M4_IN) AdjustL();
+        if(M5_IN || R5_IN) AdjustR();
+        if(!L4_IN && !M4_IN && !M5_IN && !R5_IN) {break;}
+    }
+
+    // 转90度
+    LRotate(3); HAL_Delay(900);  // 90 度
+    LRotate(0.5); while (!M2_IN && (!L2_IN || !R2_IN)) {} Stop();
+
     //突然想到一个点，可以抓一个壶的同时投一个壶，可以节省时间
     // notice the original status, the car's orientation
     int status[5],idx=0;
     int i=0,j=0;
-    for(;idx<2;)
-    {
-        while(!(CS11001)||!(CS10001)||!(CS10011))
-        {
-            GoLeft();
-        }
-        status[idx] = Recognize(); idx++;
-        while(!(CS00000))
-        {
-            GoLeft();
-        }
-    }
+    // 识别第一个壶
+    GoLeft();
+    while(!L5_IN) {} Stop();
+    status[idx] = Recognize(); idx++;
+    
+    // 识别第二个壶
+    GoLeft();
+    HAL_Delay(1000);
+    GoLeft();
+    while(!L5_IN) {} Stop();
+    status[idx] = Recognize(); idx++;
+
+    // 移动到投壶区
+    GoLeft();
+    HAL_Delay(2000);
+    while(!L5_IN) {} Stop();
+    
+    // 投壶
+
+/*
     for(i=0; i<2;)
     {
         GoLeft();
@@ -284,7 +326,7 @@ void Run3_new()
         while(!(CS11001)||!(CS10001)||!(CS10011)) AdjustR();
         Cast();
     }
-
+*/
 }
 
 #define ALONG_THE_LINE ((CS10011) || (CS11001) || (CS10001))
@@ -642,191 +684,193 @@ void Run1L()
     }
 }
 
-int Ranging()
-{
-    // double csb module version
-    uint32_t dist_mm1 = csb_get_distance();
-    HAL_Delay(3);
-    uint32_t dist_mm2 = csb2_get_distance();
-    int delta = (signed)dist_mm1 - (signed)dist_mm2;
-    if (dist_mm1 < 300 || dist_mm2 < 300) {
-        return -1;
-    } else if (dist_mm1 > 400 || dist_mm2 > 400) {
-        return 1;
-    }
-    if (delta > 20) {
-        return 1;
-    } else if (delta < -20) {
-        return -1;
-    }
+// int Ranging()
+// {
+//     // double csb module version
+//     uint32_t dist_mm1 = csb_get_distance();
+//     HAL_Delay(3);
+//     uint32_t dist_mm2 = csb2_get_distance();
+//     int delta = (signed)dist_mm1 - (signed)dist_mm2;
+//     if (dist_mm1 < 300 || dist_mm2 < 300) {
+//         return -1;
+//     } else if (dist_mm1 > 400 || dist_mm2 > 400) {
+//         return 1;
+//     }
+//     if (delta > 20) {
+//         return 1;
+//     } else if (delta < -20) {
+//         return -1;
+//     }
 
-    /*
-    GoRight();
-    uint32_t dist_mm1 = csb_get_distance();
-    TIM1_Delay_us(100 * 1000);          // 100 ms
-    uint32_t dist_mm2 = csb_get_distance();
-    if (dist_mm1 < dist_mm2) return 1;
-    else return -1;
-    */
-    return 0;
-}
+//     /*
+//     GoRight();
+//     uint32_t dist_mm1 = csb_get_distance();
+//     TIM1_Delay_us(100 * 1000);          // 100 ms
+//     uint32_t dist_mm2 = csb_get_distance();
+//     if (dist_mm1 < dist_mm2) return 1;
+//     else return -1;
+//     */
+//     return 0;
+// }
 
-void Run2()
-{
-    // GoRight();
-    // return;
-    int t = Ranging();
-    if(t == 0) { GoRight(); HAL_Delay(200); }
-    //Ranging()是第二阶段超声测距函数，用于比较车前后与挡板距离
-    else if(t == 1) {
-        AdjustR();//越来越远
-        HAL_Delay(50);
-    } else if(t == -1) {
-        AdjustL();//反之
-        HAL_Delay(50);
-    }
-}
+// PID调好暂时不使用超声测距
+// void Run2()
+// {
+//     // GoRight();
+//     // return;
+//     int t = Ranging();
+//     if(t == 0) { GoRight(); HAL_Delay(200); }
+//     //Ranging()是第二阶段超声测距函数，用于比较车前后与挡板距离
+//     else if(t == 1) {
+//         AdjustR();//越来越远
+//         HAL_Delay(50);
+//     } else if(t == -1) {
+//         AdjustL();//反之
+//         HAL_Delay(50);
+//     }
+// }
 
-void Run3()
-{
-    int count_all=0,count_yellow=0;
-    int ismine=0;
-    int status[5]={0,0,0,0,0};
-    int i=0,j=0;
-    for(;j < 2;j++)
-    {
-        /*
-        while(!(CS10000))
-        {
-            Run1();
-        }
-        */
+// void Run3()
+// {
+//     int count_all=0,count_yellow=0;
+//     int ismine=0;
+//     int status[5]={0,0,0,0,0};
+//     int i=0,j=0;
+//     for(;j < 2;j++)
+//     {
+//         /*
+//         while(!(CS10000))
+//         {
+//             Run1();
+//         }
+//         */
 
-        while(!(CS_R10001))//增加一个右侧巡线模块
-        {
-            Run1();
-        }
-        TurnR90();
-        ismine = Recognize();//若识别为我方冰壶，返回1
-        count_all++;
-        count_yellow += ismine;
-        if(ismine)
-        {
-            status[i]=1;
-        }
-        i++;
-        TurnL90();
-    }
-    for(;j < 5;j++)
-    {
-        while(!(CS00000))
-        {
-            Run1();
-        }
-        TurnL90();
-        ismine = Recognize();
-        count_all++;
-        count_yellow += ismine;
-        if(ismine)
-        {
-            status[i]=-1;
-        }
-        i++;
-        TurnR90();
-        if((count_all == 5) || (count_yellow == 3))
-        {
-            break;
-        }
-    }
+//         while(!(CS_R10001))//增加一个右侧巡线模块
+//         {
+//             Run1();
+//         }
+//         TurnR90();
+//         ismine = Recognize();//若识别为我方冰壶，返回1
+//         count_all++;
+//         count_yellow += ismine;
+//         if(ismine)
+//         {
+//             status[i]=1;
+//         }
+//         i++;
+//         TurnL90();
+//     }
+//     for(;j < 5;j++)
+//     {
+//         while(!(CS00000))
+//         {
+//             Run1();
+//         }
+//         TurnL90();
+//         ismine = Recognize();
+//         count_all++;
+//         count_yellow += ismine;
+//         if(ismine)
+//         {
+//             status[i]=-1;
+//         }
+//         i++;
+//         TurnR90();
+//         if((count_all == 5) || (count_yellow == 3))
+//         {
+//             break;
+//         }
+//     }
 
-    if(j == 4)
-    {
-        Turn180();
-        while(!(CS00000))
-        {
-            Run1();
-        }
-        TurnL90();
-        Cast();
-    }
-    if(j == 3)
-    {
-        Turn180();
-        Cast();
-    }
-    if(j == 2)
-    {
-        while(!(CS00000))
-        {
-            Run1();
-        }
-        TurnR90();
-        Cast();
-    }
+//     if(j == 4)
+//     {
+//         Turn180();
+//         while(!(CS00000))
+//         {
+//             Run1();
+//         }
+//         TurnL90();
+//         Cast();
+//     }
+//     if(j == 3)
+//     {
+//         Turn180();
+//         Cast();
+//     }
+//     if(j == 2)
+//     {
+//         while(!(CS00000))
+//         {
+//             Run1();
+//         }
+//         TurnR90();
+//         Cast();
+//     }
 
-    for(i = 0;i < 5;i++)
-    {
-        if(status[i] != 0)
-        {
-            if(status[i] == 1)
-            {
-                TurnR90();
-                int count = 3-i;
-                while(count != 0)
-                {
-                    Run1();
-                    if((CS00000) || (CS00001)) count--;
-                }
-                TurnL90();
-                Capture();
-                TurnL90();
-                while(count != 3-i)
-                {
-                    Run1();
-                    if((CS00000) || (CS00001)) count++;
-                }
-                TurnR90();
-                Cast();
-            }
+//     for(i = 0;i < 5;i++)
+//     {
+//         if(status[i] != 0)
+//         {
+//             if(status[i] == 1)
+//             {
+//                 TurnR90();
+//                 int count = 3-i;
+//                 while(count != 0)
+//                 {
+//                     Run1();
+//                     if((CS00000) || (CS00001)) count--;
+//                 }
+//                 TurnL90();
+//                 Capture();
+//                 TurnL90();
+//                 while(count != 3-i)
+//                 {
+//                     Run1();
+//                     if((CS00000) || (CS00001)) count++;
+//                 }
+//                 TurnR90();
+//                 Cast();
+//             }
 
-            if(status[i] == -1)
-            {
-                int count = 3-i;
-                if(count == 1)
-                {
-                    TurnR90();
-                    while(!(CS00000)) Run1();
-                    TurnR90();
-                    Capture();
-                    TurnR90();
-                    while(!(CS00000)) Run1();
-                    TurnR90();
-                    Cast();
-                }
-                else if(count == 0)
-                {
-                    Turn180();
-                    Capture();
-                    Turn180();
-                    Cast();
-                }
-                else if(count == -1)
-                {
-                    TurnL90();
-                    while(!(CS00000)) Run1();
-                    TurnL90();
-                    Capture();
-                    TurnL90();
-                    while(!(CS00000)) Run1();
-                    TurnL90();
-                    Cast();
-                }
-            }
-        }
-    }
+//             if(status[i] == -1)
+//             {
+//                 int count = 3-i;
+//                 if(count == 1)
+//                 {
+//                     TurnR90();
+//                     while(!(CS00000)) Run1();
+//                     TurnR90();
+//                     Capture();
+//                     TurnR90();
+//                     while(!(CS00000)) Run1();
+//                     TurnR90();
+//                     Cast();
+//                 }
+//                 else if(count == 0)
+//                 {
+//                     Turn180();
+//                     Capture();
+//                     Turn180();
+//                     Cast();
+//                 }
+//                 else if(count == -1)
+//                 {
+//                     TurnL90();
+//                     while(!(CS00000)) Run1();
+//                     TurnL90();
+//                     Capture();
+//                     TurnL90();
+//                     while(!(CS00000)) Run1();
+//                     TurnL90();
+//                     Cast();
+//                 }
+//             }
+//         }
+//     }
 
-}
+// }
 
+/*
 void Run3_1(void)
 {
     int countR = 0,countL = 0;
@@ -959,7 +1003,7 @@ void Run3_1(void)
         Cast();
     }
 }
-
+*/
 /*
 void Run()
 {
