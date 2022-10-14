@@ -142,7 +142,25 @@ int Recognize() {
 }
 
 
+void Run1()
+{
+    if(!(WL_1 + WL_2 + WL_3 + WR_1 + WR_2 + WR_3)){
+        GoForward();
+    }
+    else if(WL_3 == 1){
+        AdjustL();
+    }
+    else if(WR_1 == 1){
+        AdjustR();
+    }
+}
 
+
+void Run_Forward(){
+    while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) (WR_3 == 1))){
+        Run1();
+    }
+}
 
 
 void Run_new()

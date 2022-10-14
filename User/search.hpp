@@ -46,18 +46,10 @@ void actuator_stop();
 
 /* Exported function declarations----------------------------------------------*/
 
-int Ranging(void);
+void Run1(void);
 void RunAll(void);
 void RunAll_Moveleft(void);
-void Run1(void);    //阶段一，直线到第一个转弯
-void Run1Q(void);
-void Run1L(void);
-void Run2(void);    //阶段二，关闭正常巡线模式，通过激光测距确保直行
-void Run3(void);    //阶段三，开启巡线模块，识别、投壶
-int Recognize(void);   //识别
-void Capture(void);  //抓取
-void Cast(void);	//投掷
-void GoForward(float);	//直行
+void Go_Forward(void);	//直行
 void GoBackward(void);
 void GoRight(float);
 void GoLeft(void);
@@ -65,10 +57,5 @@ void RRotate(float);
 void AdjustR(float);		//向右小角度调整
 void AdjustL(float);		//向左小角度调整
 void Stop(void);		//停止
-void TurnR90(void);		//向右转90度
-void TurnL90(void);		//向左转90度
-void Turn180(void);
-void TurnOffTrailing(void);	//关闭红外巡线模块
-void TurnOnRanging(void);	//打开激光测距模块
 
 #endif
