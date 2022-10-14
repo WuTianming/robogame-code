@@ -173,5 +173,14 @@ void Stage2() {
     HAL_Delay(500);
     GoRight(1.0);
     HAL_Delay(5200 * 2.2);
+    GoRight(0.4);
+#define RIGHT_HAS_BLACK (!WR_1 || !WR_2 || !WR_3)
+    while (!RIGHT_HAS_BLACK);
+    while ( RIGHT_HAS_BLACK);
+#undef  RIGHT_HAS_BLACK
     Stop();
+}
+
+void Stage3() {
+    ;
 }

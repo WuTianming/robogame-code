@@ -64,6 +64,9 @@ void actuator_stop();
 
 void Stage1();
 void Stage2();
+void Stage3();
+void Stage4();
+void Stage5();
 
 void Run1(void);
 void RunAll(void);

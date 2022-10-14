@@ -176,6 +176,7 @@ int main(void)
   // 三审
   Stage1();
   Stage2();
+  Stage3();
   while (1);
   /*
   // while (1);
