@@ -42,9 +42,9 @@
 # define D_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
 
 // 后面巡线模块
-# define s_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
-# define s_2   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
-# define s_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define S_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define S_2   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define S_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
 
 
 #define ACTUATOR_HAL_DELAY 2300
