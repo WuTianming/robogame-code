@@ -223,8 +223,8 @@ if (0)
 
     //速度解算
     float velRot = Velocity.Omega * OMEGA_TO_LINEAR / WHEEL_RADIUS;
-    float velr   = (Velocity.Y + Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
-    float vell   = (Velocity.Y - Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
+    float velr   = (-Velocity.Y + Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
+    float vell   = (-Velocity.Y - Velocity.X) * K_LINEAR_COSINE / WHEEL_RADIUS;
     Motor[0].Set_Omega_Target(velr - velRot);
     Motor[1].Set_Omega_Target(vell - velRot);
     Motor[2].Set_Omega_Target(velr + velRot);

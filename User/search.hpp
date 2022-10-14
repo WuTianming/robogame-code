@@ -23,13 +23,13 @@
 
 // 红外巡线的五个输入
 // 前面左边巡线模块
-# define WL_1  HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2)
-# define WL_2  HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)
-# define WL_3   HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_9)
+# define WL_1  HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_4)
+# define WL_2  HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_6)
+# define WL_3  HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_7)
 // 前面右边巡线模块
-# define WR_1   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_5)
-# define WR_2  HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_13)
-# define WR_3  HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_5)
+# define WR_1  HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define WR_2  HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_5)
+# define WR_3  HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2)
 
 #define ACTUATOR_HAL_DELAY 2300
 
@@ -49,7 +49,7 @@ void actuator_stop();
 void Run1(void);
 void RunAll(void);
 void RunAll_Moveleft(void);
-void Go_Forward(void);	//直行
+void GoForward(float);	//直行
 void GoBackward(void);
 void GoRight(float);
 void GoLeft(void);
@@ -57,5 +57,6 @@ void RRotate(float);
 void AdjustR(float);		//向右小角度调整
 void AdjustL(float);		//向左小角度调整
 void Stop(void);		//停止
+void Run_Forward(void);
 
 #endif

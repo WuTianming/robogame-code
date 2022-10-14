@@ -174,6 +174,8 @@ int main(void)
   */
 
   // 三审
+  Run_Forward();
+  while (1);
   /*
   // while (1);
   actuator_up();

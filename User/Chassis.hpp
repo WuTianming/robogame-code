@@ -64,9 +64,9 @@ class Class_Chassis
          * 底盘对应的电机
          * 按照 Y+ 方向设置正方向
          *
-         * M[0]  O-------O  M[3]
+         * M[3]  O-------O  M[0]
          *       |   ^   |
-         * M[1]  O-------O  M[2]
+         * M[2]  O-------O  M[1]
          */
         Class_Motor_With_Hall_Encoder Motor[4];
         //底盘对应的遥控器
