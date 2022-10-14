@@ -174,7 +174,8 @@ int main(void)
   */
 
   // 三审
-  Run_Forward();
+  Stage1();
+  Stage2();
   while (1);
   /*
   // while (1);

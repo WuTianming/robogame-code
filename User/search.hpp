@@ -46,6 +46,9 @@ void actuator_stop();
 
 /* Exported function declarations----------------------------------------------*/
 
+void Stage1();
+void Stage2();
+
 void Run1(void);
 void RunAll(void);
 void RunAll_Moveleft(void);

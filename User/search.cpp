@@ -157,10 +157,19 @@ void Run1()
     }
 }
 
-
 void Run_Forward(){
     while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) && (WR_3 == 1))){
         Run1();
     }
+    Stop();
+}
+
+void Stage1() {
+    Run_Forward();
+}
+
+void Stage2() {
+    GoRight(1.0);
+    HAL_Delay(5200);
     Stop();
 }
