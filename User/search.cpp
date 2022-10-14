@@ -212,7 +212,15 @@ void Stage4() {
 }
 
 void Stage5() {
-    ;
+    RRotate(-1);
+    while(A_1);
+    RRotate(-0.4);
+    while(!A_1);
+    RRotate(-1);
+    while(A_1);
+    RRotate(-0.4);
+    while(!A_1);
+    Stop();
 }
 
 void Fix(void) {
