@@ -37,9 +37,9 @@
 # define A_3   HAL_GPIO_ReadPin(GPIOI,GPIO_PIN_3)
 
 // 右边巡线模块
-# define D_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2)
+# define D_1   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_5)
 # define D_2   HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)
-# define D_3   HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_5)
+# define D_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2)
 
 // 后面巡线模块
 # define S_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
@@ -72,9 +72,9 @@ void Run1(void);
 void RunAll(void);
 void RunAll_Moveleft(void);
 void GoForward(float);	//直行
-void GoBackward(void);
+void GoBackward(float);
 void GoRight(float);
-void GoLeft(void);
+void GoLeft(float);
 void RRotate(float);
 void AdjustR(float);		//向右小角度调整
 void AdjustL(float);		//向左小角度调整

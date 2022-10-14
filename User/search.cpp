@@ -53,20 +53,12 @@ void GoForward(float v=fb_vel) {
     car.Set_Velocity(vel);
 }
 
-void GoBackward() {
-    SpeedTypeDef vel;
-    vel.Omega = 0;
-    vel.Y = -fb_vel;
-    vel.X = 0.0;
-    car.Set_Velocity(vel);
+void GoBackward(float v=fb_vel) {
+    GoForward(-v);
 }
 
-void GoLeft() {
-    SpeedTypeDef vel;
-    vel.Omega = 0;
-    vel.Y = 0.0;
-    vel.X = -lr_vel;
-    car.Set_Velocity(vel);
+void GoLeft(float vv = lr_vel) {
+    GoRight(-vv);
 }
 
 void GoRight(float vv = lr_vel) {
@@ -159,7 +151,7 @@ void Run1()
 
 void Run_Left()
 {
-    if(S_1 && S_2 && S_3){
+    if(A_1 && A_2 && A_3){
         GoLeft();
     }
     else if(A_2 == 0){
@@ -186,7 +178,8 @@ void Stage1() {
 
 void Stage2() {
     GoForward();
-    HAL_Delay(500);
+    // HAL_Delay(500);
+    HAL_Delay(600);
     GoRight(1.0);
     HAL_Delay(5200 * 2.2);
     GoRight(0.4);
@@ -223,23 +216,79 @@ void Stage5() {
     Stop();
 }
 
-void Fix(void) {
-    while(!WR_1 || !WR_2 || !WR_3){
-        GoRight();  // 以很慢的速度调整
-    }
-    while(!WL_1 || !WL_2 || !WL_3){
-        GoLeft();   // 
-    }
+/*
+1. 先确保左边卡到位置（通过纯粹的前后平移）
+2. 再旋转，让右边卡到位置（通过旋转）
+3. 再返回 1 重复，直到不产生任何多余调整，此时可以认为车的朝向已经调整完成
+4. 再用前面的巡线模块卡好左右位置
+5. 返回 1 重复，直到不产生任何多余调整。
+*/
 
-    while(1){
-        if((A_1 == 0) || (D_1 == 0)){
-            AdjustL();
-            HAL_Delay(10);
+bool FixLeft(void) {
+    bool has_adj = false;
+    while (!A_1 || !A_2 || !A_3) {
+        if (!A_3) {
+            GoForward(0.2);
+        } else {
+            GoBackward(0.2);
         }
-        if((A_3 == 0) || (D_3 == 0)){
-            AdjustR();
-            HAL_Delay(10);
-        }
-        // 暂时先不考虑左右两边巡线全都在外面的情况
+        has_adj = true;
     }
+    Stop();
+    return has_adj;
+}
+
+bool FixRight(void) {
+    bool has_adj = false;
+    while (!D_1 || !D_2 || !D_3) {
+        if (!D_1) {
+            // RRotate(-rmicro);
+            GoForward(rmicro * 0.50 * CHASSIS_A);
+            AdjustL(rmicro);
+        } else {
+            // RRotate(rmicro);
+            GoBackward(rmicro * 0.50 * CHASSIS_A);
+            AdjustR(rmicro);
+        }
+        has_adj = true;
+    }
+    Stop();
+    return has_adj;
+}
+
+bool FixY(void) {
+    bool has_adj = false;
+    while (1) {
+        bool has_adj1 = false;
+        has_adj1 |= FixLeft();
+        has_adj1 |= FixRight();
+        has_adj  |= has_adj1;
+        if (!has_adj1) break;
+    }
+    Stop();
+    return has_adj;
+}
+
+bool FixX(void) {
+    bool has_adj = false;
+    while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
+        if (WL_1 || WL_2 || WL_3) {
+            GoLeft(0.2);   // 
+        } else {
+            GoRight(0.2);
+        }
+        has_adj = true;
+    }
+    Stop();
+    return has_adj;
+}
+
+void Fix(void) {
+    while (1) {
+        bool has_adj1 = false;
+        has_adj1 |= FixY();
+        has_adj1 |= FixX();
+        if (!has_adj1) break;
+    }
+    Stop();
 }
