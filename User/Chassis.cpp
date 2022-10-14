@@ -90,7 +90,7 @@ void Class_Chassis::Init()
         Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 30000);     // recovery test, low upper bound
         Motor[i].Omega_PID.Init(800, 2400, 0, 5000, 30000);     // recovery test, low upper bound
         Motor[i].Omega_PID.Init(500, 300, 0, 500, 30000);     // runs smoothly offground
-        // Motor[i].Omega_PID.Init(600, 800, 0, 200, 30000);     // smooth, eh?
+        Motor[i].Omega_PID.Init(600, 800, 0, 2000, 30000);     // smooth, eh?
         // Motor[i].Omega_PID.Init(1200, 300, 0, 10000, 20000);     // test
         // Motor[i].Omega_PID.Init(1800, 3000, 0, 4000, 4000);
         // Motor[i].Omega_PID.Init(1300, 2000, 0, 20000, 10000);

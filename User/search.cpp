@@ -169,7 +169,9 @@ void Stage1() {
 }
 
 void Stage2() {
+    GoForward();
+    HAL_Delay(500);
     GoRight(1.0);
-    HAL_Delay(5200);
+    HAL_Delay(5200 * 2.2);
     Stop();
 }
