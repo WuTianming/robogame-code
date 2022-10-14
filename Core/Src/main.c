@@ -176,8 +176,8 @@ int main(void)
   // 三审
   // Stage1();
   // Stage2();
-  Stage3();
-  while (1);
+  // Stage3();
+  // while (1);
   /*
   // while (1);
   actuator_up();
@@ -232,16 +232,20 @@ int main(void)
 
   // /* // 平地抓壶
   while (1) {
-    claw.open();
+    claw.Set_Out(850);
+    claw.Output();
+    // claw.open();
     HAL_Delay(1000);
-    claw.close();
+    claw.Set_Out(980);
+    claw.Output();
+    // claw.close();
     HAL_Delay(1000);
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY);
-    actuator_stop();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY);
+    // actuator_up();
+    // HAL_Delay(ACTUATOR_HAL_DELAY);
+    // actuator_stop();
+    // HAL_Delay(ACTUATOR_HAL_DELAY / 2);
+    // actuator_down();
+    // HAL_Delay(ACTUATOR_HAL_DELAY);
   }
   // */
 
