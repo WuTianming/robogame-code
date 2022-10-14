@@ -205,9 +205,8 @@ void Stage3() {
 }
 
 void Stage4() {
-    while(!WR_1){
-        Run_Left();
-    }
+    while(!WL_2){ Run_Left(); }
+    while( WL_2){ Run_Left(); }
     Stop();
 }
 

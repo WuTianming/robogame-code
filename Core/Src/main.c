@@ -174,10 +174,16 @@ int main(void)
   */
 
   // 三审
-  // Stage1();
-  // Stage2();
-  // Stage3();
-  // while (1);
+  Stage1();
+  Stage2();
+  Stage3();
+  Stage4();
+  HAL_Delay(1000);
+  Stage4();
+  HAL_Delay(1000);
+  Stage4();
+  HAL_Delay(1000);
+  while (1);
   /*
   // while (1);
   actuator_up();
@@ -230,7 +236,7 @@ int main(void)
   }
   */
 
-  // /* // 平地抓壶
+  /* // 平地抓壶
   while (1) {
     claw.Set_Out(850);
     claw.Output();
@@ -247,7 +253,7 @@ int main(void)
     // actuator_down();
     // HAL_Delay(ACTUATOR_HAL_DELAY);
   }
-  // */
+  */
 
   /* // 高度抓壶
   actuator_up();
