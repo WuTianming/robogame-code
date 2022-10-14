@@ -31,6 +31,22 @@
 # define WR_2  HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_5)
 # define WR_3  HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_2)
 
+// 左边巡线模块
+# define A_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define A_2   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define A_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+
+// 右边巡线模块
+# define D_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define D_2   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define D_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+
+// 后面巡线模块
+# define s_1   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define s_2   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define s_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+
+
 #define ACTUATOR_HAL_DELAY 2300
 
 extern Class_Chassis car;
