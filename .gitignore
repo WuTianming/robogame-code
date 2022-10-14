@@ -3,3 +3,4 @@ build/
 .DS_Store
 .vscode/
 STM32Make.make
+STM32Make.make
