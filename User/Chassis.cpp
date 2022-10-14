@@ -87,6 +87,9 @@ void Class_Chassis::Init()
         // Motor[i].Omega_PID.Init(omega_kp, omega_ki, omega_kd, omega_I_outmax, omega_outmax);
         // Motor[i].Omega_PID.Init(1000, 1000, 0, 4000, 20000);
         Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 20000);     // king 22.10.5
+        Motor[i].Omega_PID.Init(1200, 300, 0, 1000, 30000);     // recovery test, low upper bound
+        Motor[i].Omega_PID.Init(800, 2400, 0, 5000, 30000);     // recovery test, low upper bound
+        Motor[i].Omega_PID.Init(500, 300, 0, 500, 30000);     // runs smoothly offground
         // Motor[i].Omega_PID.Init(1200, 300, 0, 10000, 20000);     // test
         // Motor[i].Omega_PID.Init(1800, 3000, 0, 4000, 4000);
         // Motor[i].Omega_PID.Init(1300, 2000, 0, 20000, 10000);
@@ -191,20 +194,8 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
                 Velocity = v;
         }
 
-        int shooter = DR16.Get_Shooter();
         int actuator = DR16.Get_Actuator();
-        if (shooter == 1) {
-            Shooter->Set_Out(9999);
-            Shooter->Output();
-        } else if (shooter == -1) {
-            Shooter->Set_Out(-1000);
-            Shooter->Output();
-        } else {
-            Shooter->Set_Out(0);
-            Shooter->Output();
-        }
-        
-    if (0)
+if (0)
         if (actuator == 1) {
             // up
             if (claw->getstate() == 1) {

@@ -29,8 +29,9 @@ const float WHEEL_FULL_V = (MOTOR_FULL_OMEGA * WHEEL_RADIUS);
 
 //车的(1/2)(长边长、短边长、对角线长)
 const float CHASSIS_A = 0.25f;
-const float CHASSIS_B = 0.20f;
-const float CHASSIS_R = 0.3201562f;
+const float CHASSIS_B = 0.25f;
+// const float CHASSIS_R = 0.3201562f;
+const float CHASSIS_R = 0.3535533906f;
 
 //45度角 1/sqrt(2)
 const float K_LINEAR_COSINE = 0.707107f;
@@ -38,7 +39,8 @@ const float K_LINEAR_COSINE = 0.707107f;
 //旋转的速度分解因子
 // k = cos(pi/4 - arctan(b/a)), a>b
 // consider k ~ 1
-const float K_OMEGA_COSINE = 0.993884f;
+// const float K_OMEGA_COSINE = 0.993884f;
+const float K_OMEGA_COSINE = 1.0f;
 
 //omega到轮子线速度映射系数, m/rad
 //v_spin = k * sqrt(a^2 + b^2) * omega
@@ -71,7 +73,6 @@ class Class_Chassis
         Class_DR16 DR16;
 
         // 遥控器可以控制shooter
-        Class_Motor *Shooter;
         Class_Steer *claw;
 
         void Init();        // arguments implicitly contained in the function

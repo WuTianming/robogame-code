@@ -53,7 +53,6 @@ int myAtoi(char* str)
 
 Class_Chassis car;
 Class_Steer   claw;
-Class_Motor   shooter;
 
 /* USER CODE END PD */
 
@@ -119,15 +118,9 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
-  // car.Set_Control_Method(Control_Method_OPENLOOP);
   car.Set_Control_Method(Control_Method_OMEGA);
-  car.Set_DR16(true);
-  // car.Set_DR16(false);
+  car.Set_DR16(false);
   claw.Init(&htim8, TIM_CHANNEL_1);
-  shooter.Init(&htim8, TIM_CHANNEL_3, TIM_CHANNEL_4);
-  shooter.Set_Motor_PWM_Period(10000);
-  shooter.Set_Rotate_Direction_Flag(CCW);
-  car.Shooter = &shooter;
   // car.claw = &claw;
   HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
@@ -181,7 +174,7 @@ int main(void)
   */
 
   // 三审
-  // /*
+  /*
   // while (1);
   actuator_up();
   HAL_Delay(ACTUATOR_HAL_DELAY*2);
@@ -190,10 +183,9 @@ int main(void)
   // RunAll();
   RunAll_Moveleft();
   while (1);
-  // */
+  */
 
-/*
-  // 测试升降
+/* // 测试升降
   while (1) {
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
@@ -210,8 +202,7 @@ int main(void)
   }
   */
 
-/*
-  Run12();
+/* Run12();
 
   vel.Y = 0.3;
   car.Set_Velocity(vel);
@@ -226,8 +217,7 @@ int main(void)
   }
 */
 
-/*
-  while (1) {
+/* while (1) {
     const char *s = "heartbeartttt\n";
     HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
     char ss[40];
@@ -236,8 +226,7 @@ int main(void)
   }
   */
 
-  /*
-  // 平地抓壶
+  // /* // 平地抓壶
   while (1) {
     claw.open();
     HAL_Delay(1000);
@@ -250,10 +239,9 @@ int main(void)
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
   }
-  */
+  // */
 
-  /*
-  // 高度抓壶
+  /* // 高度抓壶
   actuator_up();
   HAL_Delay(ACTUATOR_HAL_DELAY);
   claw.open();
@@ -282,18 +270,29 @@ int main(void)
   while (1)
   {
     if (0) {
-      vel.Omega = 0.3f; vel.X = 0; vel.Y = 0;
+      vel.Omega = 3.0f; vel.X = 0; vel.Y = 0;
       car.Set_Velocity(vel); HAL_Delay(1200);
       vel.Omega = 0; vel.X = 0; vel.Y = 0;
       car.Set_Velocity(vel); HAL_Delay(1000);
-      vel.Omega = 0.0f; vel.X = 0.2; vel.Y = 0;
+      vel.Omega = 0.0f; vel.X = 2; vel.Y = 0;
       car.Set_Velocity(vel); HAL_Delay(1200);
       vel.Omega = 0; vel.X = 0; vel.Y = 0;
       car.Set_Velocity(vel); HAL_Delay(1000);
-      vel.Omega = 0.0f; vel.X = 0; vel.Y = 0.2;
+      vel.Omega = 0.0f; vel.X = 0; vel.Y = 0.5;
       car.Set_Velocity(vel); HAL_Delay(1200);
       vel.Omega = 0; vel.X = 0; vel.Y = 0;
       car.Set_Velocity(vel); HAL_Delay(1000);
+    } else if (0) {
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          if (i == j)
+            car.Motor[j].Set_Omega_Target(5);
+          else
+            car.Motor[j].Set_Omega_Target(0);
+          car.Motor[j].Output();
+        }
+        HAL_Delay(4000);
+      }
     }
     /* USER CODE END WHILE */
 
