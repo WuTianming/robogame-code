@@ -157,6 +157,21 @@ void Run1()
     }
 }
 
+void Run_Left()
+{
+    if(A_1 && A_2 && A_3){
+        GoLeft();
+    }
+    else if(A_2 == 0){
+        AdjustL();
+        HAL_Delay(10);
+    }
+    else if(A_3 == 0){
+        AdjustR();
+        HAL_Delay(10);
+    }
+}
+
 void Run_Forward(){
     while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) && (WR_3 == 1))){
         Run1();
@@ -187,4 +202,15 @@ void Stage3() {
     RRotate(-0.4);
     while(!A_1);
     Stop();
+}
+
+void Stage4() {
+    while(!WR_1){
+        Run_Left();
+    }
+    Stop();
+}
+
+void Stage5() {
+    ;
 }
