@@ -81,4 +81,7 @@ void AdjustL(float);		//向左小角度调整
 void Stop(void);		//停止
 void Run_Forward(void);
 
+void Fix(void);
+
+
 #endif

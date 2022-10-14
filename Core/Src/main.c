@@ -182,7 +182,17 @@ int main(void)
   Stage4();
   HAL_Delay(1000);
   Stage4();
-  HAL_Delay(1000);
+  HAL_Delay(500);
+  Fix();
+  
+  Stage4();
+  HAL_Delay(500);
+  Fix();
+  Stage4();
+  HAL_Delay(500);
+  Fix();
+  
+
   while (1);
   /*
   // while (1);

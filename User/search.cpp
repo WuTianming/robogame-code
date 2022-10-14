@@ -159,7 +159,7 @@ void Run1()
 
 void Run_Left()
 {
-    if(A_1 && A_2 && A_3){
+    if(S_1 && S_2 && S_3){
         GoLeft();
     }
     else if(A_2 == 0){
@@ -171,6 +171,7 @@ void Run_Left()
         HAL_Delay(10);
     }
 }
+
 
 void Run_Forward(){
     while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) && (WR_3 == 1))){
@@ -212,4 +213,25 @@ void Stage4() {
 
 void Stage5() {
     ;
+}
+
+void Fix(void) {
+    while(!WR_1 || !WR_2 || !WR_3){
+        GoRight();  // 以很慢的速度调整
+    }
+    while(!WL_1 || !WL_2 || !WL_3){
+        GoLeft();   // 
+    }
+
+    while(1){
+        if((A_1 == 0) || (D_1 == 0)){
+            AdjustL();
+            HAL_Delay(10);
+        }
+        if((A_3 == 0) || (D_3 == 0)){
+            AdjustR();
+            HAL_Delay(10);
+        }
+        // 暂时先不考虑左右两边巡线全都在外面的情况
+    }
 }
