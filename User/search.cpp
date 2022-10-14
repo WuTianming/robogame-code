@@ -182,7 +182,9 @@ void Stage2() {
 }
 
 void Stage3() {
-    while(!A_1);
+    RRotate(-1);
     while(A_1);
+    RRotate(-0.4);
+    while(!A_1);
     Stop();
 }
