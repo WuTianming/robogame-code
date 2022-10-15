@@ -81,10 +81,10 @@ void Error_Handler(void);
 #define m4_yellow_Pin GPIO_PIN_7
 #define m4_yellow_GPIO_Port GPIOC
 #define m4_yellow_EXTI_IRQn EXTI9_5_IRQn
-#define shooter_Pin GPIO_PIN_8
-#define shooter_GPIO_Port GPIOC
-#define shooter_r_Pin GPIO_PIN_9
-#define shooter_r_GPIO_Port GPIOC
+#define actuator1_Pin GPIO_PIN_8
+#define actuator1_GPIO_Port GPIOC
+#define actuator2_Pin GPIO_PIN_9
+#define actuator2_GPIO_Port GPIOC
 #define m2r_pwm_Pin GPIO_PIN_0
 #define m2r_pwm_GPIO_Port GPIOI
 #define CSB2_Echo_Pin GPIO_PIN_15
@@ -93,10 +93,8 @@ void Error_Handler(void);
 #define visual_rx_GPIO_Port GPIOC
 #define CSB_Trig_Pin GPIO_PIN_3
 #define CSB_Trig_GPIO_Port GPIOD
-#define CSB_Echo_Pin GPIO_PIN_7
-#define CSB_Echo_GPIO_Port GPIOD
-#define CSB2_Trig_Pin GPIO_PIN_10
-#define CSB2_Trig_GPIO_Port GPIOG
+#define solenoid_Pin GPIO_PIN_10
+#define solenoid_GPIO_Port GPIOG
 #define m2_green_Pin GPIO_PIN_5
 #define m2_green_GPIO_Port GPIOB
 #define m3_pwm_Pin GPIO_PIN_6
@@ -111,10 +109,6 @@ void Error_Handler(void);
 #define DR16_RX_GPIO_Port GPIOE
 #define Servo_Pin GPIO_PIN_5
 #define Servo_GPIO_Port GPIOI
-#define actuator2_Pin GPIO_PIN_6
-#define actuator2_GPIO_Port GPIOI
-#define actuator1_Pin GPIO_PIN_7
-#define actuator1_GPIO_Port GPIOI
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

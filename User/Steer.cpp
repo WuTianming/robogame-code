@@ -96,8 +96,6 @@ void Class_Steer::Output()
 void Class_Steer::close()
 {
     Set_Out(1030);
-    Set_Out(1040);
-    Set_Out(1070);
     Output();
     HAL_Delay(200);
     state = 0;
@@ -105,7 +103,7 @@ void Class_Steer::close()
 
 void Class_Steer::open()
 {
-    Set_Out(900);
+    Set_Out(800);
     Output();
     HAL_Delay(200);
     state = 1;

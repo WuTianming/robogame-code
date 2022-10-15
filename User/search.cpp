@@ -10,7 +10,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "search.hpp"
-#include "csb.hpp"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -29,19 +28,20 @@ const float rmicro = 0.4;
 
 void actuator_up() {
   car.Set_Control_Method(Control_Method_OPENLOOP);
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_SET);
 }
 
 void actuator_down() {
   car.Set_Control_Method(Control_Method_OPENLOOP);
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
 }
 
 void actuator_stop() {
-  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
+  HAL_Delay(10);
   car.Set_Control_Method(Control_Method_OMEGA);
 }
 

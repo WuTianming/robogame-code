@@ -30,7 +30,6 @@
 #include "Chassis.hpp"
 #include "Steer.hpp"
 #include "search.hpp"
-#include "csb.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,6 +122,9 @@ int main(void)
   claw.Init(&htim8, TIM_CHANNEL_1);
   // car.claw = &claw;
   HAL_TIM_Base_Start_IT(&htim3);
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -142,38 +144,7 @@ int main(void)
   }
 */
 
-  // while (1) {}
-  // while (true) {
-  //   Run2();
-  // }
-
-  /*
-  // 发射冰壶
-  actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY * 1.5);
-  actuator_stop();
-  while (1) {
-    // shooter.Set_Out(6000);
-    // shooter.Output();
-    // HAL_Delay(1000);
-    // HAL_Delay(1000);
-    HAL_Delay(50);
-    shooter.Set_Out(9999);
-    shooter.Output();
-    HAL_Delay(300);
-    shooter.Set_Out(0);
-    shooter.Output();
-    while (1);
-
-    shooter.Set_Out(-6000);
-    shooter.Output();
-    // HAL_Delay(1000);
-    // HAL_Delay(1000);
-    HAL_Delay(300);
-  }
-  */
-
-  // 三审
+// /* // 三审
   Stage1();
   Stage2();
   Stage3();
@@ -192,18 +163,8 @@ int main(void)
   HAL_Delay(500);
   Fix();
   
-
   while (1);
-  /*
-  // while (1);
-  actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY*2);
-  actuator_stop();
-  claw.close();
-  // RunAll();
-  RunAll_Moveleft();
-  while (1);
-  */
+  // */
 
 /* // 测试升降
   while (1) {
@@ -246,22 +207,49 @@ int main(void)
   }
   */
 
-  /* // 平地抓壶
+  // /* // 平地抓壶
+  /*
+  claw.close();
+  actuator_down();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  claw.open();
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  while (1);
+  */
+
+/*
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY * 2);
+  actuator_down();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
   while (1) {
-    claw.Set_Out(850);
-    claw.Output();
-    // claw.open();
-    HAL_Delay(1000);
-    claw.Set_Out(980);
-    claw.Output();
-    // claw.close();
-    HAL_Delay(1000);
     // actuator_up();
     // HAL_Delay(ACTUATOR_HAL_DELAY);
     // actuator_stop();
     // HAL_Delay(ACTUATOR_HAL_DELAY / 2);
     // actuator_down();
     // HAL_Delay(ACTUATOR_HAL_DELAY);
+    claw.open();
+    HAL_Delay(1000);
+    claw.close();
+    HAL_Delay(1000);
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
+    actuator_stop();
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    claw.open();
+    GoBackward(0.4);
+    HAL_Delay(250);
+    Stop();
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    while (1);
   }
   */
 
