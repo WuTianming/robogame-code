@@ -162,17 +162,27 @@ void Run_Left()
 {
     if(A_1 && A_2 && A_3){
         GoLeft();
-    }
-    else if(A_2 == 0){
+    } else if(A_2 == 0){
         AdjustL();
         HAL_Delay(10);
-    }
-    else if(A_3 == 0){
+    } else if(A_3 == 0){
         AdjustR();
         HAL_Delay(10);
     }
 }
 
+void Run_Right()
+{
+    if(D_1 && D_2 && D_3){
+        GoRight();
+    } else if(D_1 == 0){
+        AdjustL();
+        HAL_Delay(10);
+    } else if(D_2 == 0){
+        AdjustR();
+        HAL_Delay(10);
+    }
+}
 
 void Run_Forward(){
     while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) && (WR_3 == 1))){
@@ -213,6 +223,22 @@ void NextLane() {
     Stop();
 }
 
+void PrevLane() {
+    while(!WR_2){ Run_Right(); }
+    while( WR_2){ Run_Right(); }
+    Stop();
+}
+
+void backoff() {
+    GoBackward();
+    HAL_Delay(800);
+    GoBackward(0.2);
+    while ( A_1);
+    while (!A_1);
+    Stop();
+    Fix();
+}
+
 void GoPickup() {
     uint32_t t0 = HAL_GetTick();
     uint32_t LEN = 1800;
@@ -227,15 +253,30 @@ void GoPickup() {
     actuator_stop();
     claw.close();
     actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY * 1.1);
+    HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
+}
 
-    GoBackward();
-    HAL_Delay(1000);
-    GoBackward(0.2);
-    while ( A_1);
-    while (!A_1);
+void GoPutdown() {
+    uint32_t t0 = HAL_GetTick();
+    uint32_t LEN = 2500;
+    while (HAL_GetTick() - t0 < LEN){
+        Run1();
+    }
     Stop();
+
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    claw.open();
+    HAL_Delay(300);
+    GoBackward(0.4);
+    HAL_Delay(250);
+    Stop();
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    claw.close();
 }
 
 void Stage4() {
@@ -285,9 +326,9 @@ bool FixLeft(void) {
     bool has_adj = false;
     while (!A_1 || !A_2 || !A_3) {
         if (!A_3) {
-            GoForward(0.2);
+            GoForward();
         } else {
-            GoBackward(0.2);
+            GoBackward();
         }
         has_adj = true;
     }
@@ -297,18 +338,32 @@ bool FixLeft(void) {
 
 bool FixRight(void) {
     bool has_adj = false;
-    while (!D_1 || !D_2 || !D_3) {
-        if (!D_1) {
-            // RRotate(-rmicro);
-            GoForward(rmicro * 0.50 * CHASSIS_A);
-            AdjustL(rmicro);
-        } else {
-            // RRotate(rmicro);
-            GoBackward(rmicro * 0.50 * CHASSIS_A);
-            AdjustR(rmicro);
+    if (true)
+        while (!D_1 || !D_2 || !D_3) {
+            if (!D_1) {
+                // RRotate(-rmicro);
+                GoForward(rmicro * CHASSIS_A);
+                AdjustL(rmicro);
+            } else {
+                // RRotate(rmicro);
+                GoBackward(rmicro * CHASSIS_A);
+                AdjustR(rmicro);
+            }
+            has_adj = true;
         }
-        has_adj = true;
-    }
+    else
+        while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
+            if (WL_1 || WL_2 || WL_3) {
+                // RRotate(-rmicro);
+                GoForward(rmicro * CHASSIS_A);
+                AdjustL(rmicro);
+            } else {
+                // RRotate(rmicro);
+                GoBackward(rmicro * CHASSIS_A);
+                AdjustR(rmicro);
+            }
+            has_adj = true;
+        }
     Stop();
     return has_adj;
 }
@@ -329,10 +384,13 @@ bool FixY(void) {
 bool FixX(void) {
     bool has_adj = false;
     while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
-        if (WL_1 || WL_2 || WL_3) {
-            GoLeft(0.2);   // 
+        int qwq = (WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3);
+        if (qwq > 0) {
+            GoRight(0.2);   // 
+        } else if (qwq < 0) {
+            GoLeft(0.2);
         } else {
-            GoRight(0.2);
+            break;
         }
         has_adj = true;
     }
@@ -341,6 +399,13 @@ bool FixX(void) {
 }
 
 void Fix(void) {
+    /*
+    Stop();
+    return;
+    */
+
+    Stop();
+    HAL_Delay(200);
     while (1) {
         bool has_adj1 = false;
         has_adj1 |= FixY();
@@ -348,4 +413,5 @@ void Fix(void) {
         if (!has_adj1) break;
     }
     Stop();
+    HAL_Delay(200);
 }

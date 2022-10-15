@@ -148,17 +148,42 @@ int main(void)
   // Stage1();
   // Stage2();
   // Stage3();
+
+  NextLane();
+  HAL_Delay(200);
+
   NextLane();
   HAL_Delay(1000);
-    GoPickup();
-  HAL_Delay(1000);
+  GoPickup(); backoff();
+
   NextLane();
-  HAL_Delay(1000);
-    GoPickup();
-  HAL_Delay(1000);
-  NextLane();
-  HAL_Delay(500);
+  HAL_Delay(200);
   Fix();
+
+  GoPutdown();
+  HAL_Delay(1000);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+  HAL_Delay(700);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+  backoff();
+  Fix();
+
+  NextLane();
+  HAL_Delay(1000);
+  GoPickup(); backoff();
+
+  NextLane();
+  HAL_Delay(200);
+  Fix();
+
+  GoPutdown();
+  HAL_Delay(1000);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+  HAL_Delay(700);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+  backoff();
+  Fix();
+  while (1);
   
   NextLane();
   HAL_Delay(500);
