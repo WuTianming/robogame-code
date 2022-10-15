@@ -68,6 +68,8 @@ void Stage3();
 void Stage4();
 void Stage5();
 
+void NextLane(void);
+void GoPickup();
 void Run1(void);
 void RunAll(void);
 void RunAll_Moveleft(void);

@@ -258,6 +258,7 @@ void Class_PID::Adjust_TIM_PeriodElapsedCallback()
         }
     }
     Integral_Error += Speed_Ratio * D_T * Error;
+    if (Target == 0) { Integral_Error = 0; }
     if(I_Out_Max != 0)
     {
         Math_Constrain(&Integral_Error, -I_Out_Max / K_I, I_Out_Max / K_I);

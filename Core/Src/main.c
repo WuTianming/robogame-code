@@ -145,21 +145,25 @@ int main(void)
 */
 
 // /* // 三审
-  Stage1();
-  Stage2();
-  Stage3();
-  Stage4();
+  // Stage1();
+  // Stage2();
+  // Stage3();
+  NextLane();
   HAL_Delay(1000);
-  Stage4();
+    GoPickup();
   HAL_Delay(1000);
-  Stage4();
+  NextLane();
+  HAL_Delay(1000);
+    GoPickup();
+  HAL_Delay(1000);
+  NextLane();
   HAL_Delay(500);
   Fix();
   
-  Stage4();
+  NextLane();
   HAL_Delay(500);
   Fix();
-  Stage4();
+  NextLane();
   HAL_Delay(500);
   Fix();
   

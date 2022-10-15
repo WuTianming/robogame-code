@@ -130,6 +130,15 @@ void AdjustB() {
 }
 
 int Recognize() {
+#define DEBUG
+
+#ifdef DEBUG
+    static int qwq = 0;
+    ++qwq;
+    if (qwq == 2) return 1;
+    else return 0;
+#endif
+
     return 0;
 }
 
@@ -179,7 +188,7 @@ void Stage1() {
 void Stage2() {
     GoForward();
     // HAL_Delay(500);
-    HAL_Delay(600);
+    HAL_Delay(800);
     GoRight(1.0);
     HAL_Delay(5200 * 2.2);
     GoRight(0.4);
@@ -198,10 +207,58 @@ void Stage3() {
     Stop();
 }
 
-void Stage4() {
+void NextLane() {
     while(!WL_2){ Run_Left(); }
     while( WL_2){ Run_Left(); }
     Stop();
+}
+
+void GoPickup() {
+    uint32_t t0 = HAL_GetTick();
+    uint32_t LEN = 1800;
+    while (HAL_GetTick() - t0 < LEN){
+        Run1();
+    }
+    Stop();
+
+    claw.open();
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    claw.close();
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY * 1.1);
+    actuator_stop();
+
+    GoBackward();
+    HAL_Delay(1000);
+    GoBackward(0.2);
+    while ( A_1);
+    while (!A_1);
+    Stop();
+}
+
+void Stage4() {
+    int color;
+    bool pickedup = false;
+
+// 1st lane
+    NextLane();
+    color = Recognize();
+    if (color) {
+        GoPickup();
+        pickedup = true;
+    }
+
+// 2nd lane
+    NextLane();
+    if (pickedup) {
+        // pass
+        NextLane();
+    } else {
+        // pickup
+        pickedup = true;
+    }
 }
 
 void Stage5() {
