@@ -158,8 +158,8 @@ int main(void)
 
   NextLane();
   HAL_Delay(200);
-  Fix();
 
+  Fix();
   GoPutdown();
   HAL_Delay(1000);
   HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
@@ -174,8 +174,8 @@ int main(void)
 
   NextLane();
   HAL_Delay(200);
-  Fix();
 
+  Fix();
   GoPutdown();
   HAL_Delay(1000);
   HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
@@ -185,14 +185,6 @@ int main(void)
   Fix();
   while (1);
   
-  NextLane();
-  HAL_Delay(500);
-  Fix();
-  NextLane();
-  HAL_Delay(500);
-  Fix();
-  
-  while (1);
   // */
 
 /* // 测试升降

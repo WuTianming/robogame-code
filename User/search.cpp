@@ -324,46 +324,74 @@ void Stage5() {
 
 bool FixLeft(void) {
     bool has_adj = false;
+    while (!A_3) { GoForward(0.2); has_adj = true; }
+    Stop();
+    while (!A_1) { GoBackward(0.2); has_adj = true; }
+    Stop();
+    while (!A_3) { GoForward(0.2); has_adj = true; }
+    Stop();
+    /*
     while (!A_1 || !A_2 || !A_3) {
         if (!A_3) {
-            GoForward();
+            GoForward(0.2);
         } else {
-            GoBackward();
+            GoBackward(0.2);
         }
         has_adj = true;
     }
+    */
     Stop();
     return has_adj;
 }
 
 bool FixRight(void) {
     bool has_adj = false;
-    if (true)
-        while (!D_1 || !D_2 || !D_3) {
-            if (!D_1) {
-                // RRotate(-rmicro);
-                GoForward(rmicro * CHASSIS_A);
-                AdjustL(rmicro);
-            } else {
-                // RRotate(rmicro);
-                GoBackward(rmicro * CHASSIS_A);
-                AdjustR(rmicro);
-            }
-            has_adj = true;
+    while (!D_1) {
+        // RRotate(-rmicro);
+        GoForward(rmicro * CHASSIS_A);
+        AdjustL(rmicro);
+        has_adj = true;
+    } Stop();
+    while (!D_3) {
+        // RRotate(rmicro);
+        GoBackward(rmicro * CHASSIS_A);
+        AdjustR(rmicro);
+        has_adj = true;
+    } Stop();
+    while (!D_1) {
+        // RRotate(-rmicro);
+        GoForward(rmicro * CHASSIS_A);
+        AdjustL(rmicro);
+        has_adj = true;
+    } Stop();
+    /*
+    while (!D_1 || !D_2 || !D_3) {
+        if (!D_1) {
+            // RRotate(-rmicro);
+            GoForward(rmicro * CHASSIS_A);
+            AdjustL(rmicro);
+        } else {
+            // RRotate(rmicro);
+            GoBackward(rmicro * CHASSIS_A);
+            AdjustR(rmicro);
         }
-    else
-        while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
-            if (WL_1 || WL_2 || WL_3) {
-                // RRotate(-rmicro);
-                GoForward(rmicro * CHASSIS_A);
-                AdjustL(rmicro);
-            } else {
-                // RRotate(rmicro);
-                GoBackward(rmicro * CHASSIS_A);
-                AdjustR(rmicro);
-            }
-            has_adj = true;
+        has_adj = true;
+    }
+    */
+    /*
+    while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
+        if (WL_1 || WL_2 || WL_3) {
+            // RRotate(-rmicro);
+            GoForward(rmicro * CHASSIS_A);
+            AdjustL(rmicro);
+        } else {
+            // RRotate(rmicro);
+            GoBackward(rmicro * CHASSIS_A);
+            AdjustR(rmicro);
         }
+        has_adj = true;
+    }
+    */
     Stop();
     return has_adj;
 }
@@ -383,6 +411,16 @@ bool FixY(void) {
 
 bool FixX(void) {
     bool has_adj = false;
+    while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) > 0) {
+        GoRight(0.2); has_adj = true;
+    } Stop();
+    while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) < 0) {
+        GoLeft(0.2); has_adj = true;
+    } Stop();
+    while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) > 0) {
+        GoRight(0.2); has_adj = true;
+    } Stop();
+    /*
     while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
         int qwq = (WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3);
         if (qwq > 0) {
@@ -394,6 +432,7 @@ bool FixX(void) {
         }
         has_adj = true;
     }
+    */
     Stop();
     return has_adj;
 }
@@ -406,12 +445,12 @@ void Fix(void) {
 
     Stop();
     HAL_Delay(200);
-    while (1) {
+    // while (1) {
         bool has_adj1 = false;
         has_adj1 |= FixY();
         has_adj1 |= FixX();
-        if (!has_adj1) break;
-    }
+    //     if (!has_adj1) break;
+    // }
     Stop();
     HAL_Delay(200);
 }
