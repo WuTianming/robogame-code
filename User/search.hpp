@@ -47,7 +47,8 @@
 # define S_3   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
 
 
-#define ACTUATOR_HAL_DELAY 2700
+// #define ACTUATOR_HAL_DELAY 2700
+#define ACTUATOR_HAL_DELAY 3400
 
 extern Class_Chassis car;
 extern Class_Steer claw;
@@ -68,6 +69,11 @@ void Stage3();
 void Stage4();
 void Stage5();
 
+void Nudge1(int t = 1);
+void Nudge2(int t = 1);
+void GoPickupBack();
+void backoffBack();
+void TurnAtCrossing(int interval = 4000);
 void NextLane(void);
 void PrevLane(void);
 void GoPickup();

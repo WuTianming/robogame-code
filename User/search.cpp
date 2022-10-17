@@ -130,15 +130,22 @@ void AdjustB() {
 }
 
 int Recognize() {
-#define DEBUG
+    // return 1;
 
-#ifdef DEBUG
-    static int qwq = 0;
-    ++qwq;
-    if (qwq == 2) return 1;
-    else return 0;
-#endif
-
+    HAL_Delay(1000);
+    char str[31]; str[30] = '\0';
+    HAL_UART_Receive(&huart4, (uint8_t *)str, 30, 1000);
+    HAL_UART_Receive(&huart4, (uint8_t *)str, 30, 1000);
+    int i = 0;
+    for (i = 0; i < 15; i++) { if (str[i] == 'x') break; }
+    int cx = 0, cy = 0;
+    for (i += 2; str[i] <= '9' && str[i] >= '0'; ++i) cx = cx * 10 + str[i] - '0';
+    for (i += 4; str[i] <= '9' && str[i] >= '0'; ++i) cy = cy * 10 + str[i] - '0';
+    if (cx != 0 || cy != 0) {
+        return 1;
+    } else {
+        return 0;
+    }
     return 0;
 }
 
@@ -185,6 +192,7 @@ void Run_Right()
 }
 
 void Run_Forward(){
+    GoForward();
     while(!((WL_1 == 0) && (WL_2 == 0) && (WR_2 == 1) && (WR_3 == 1))){
         Run1();
     }
@@ -192,13 +200,20 @@ void Run_Forward(){
 }
 
 void Stage1() {
+    uint32_t t0 = HAL_GetTick();
+    uint32_t LEN = 3000;
+    GoForward();
+    while (HAL_GetTick() - t0 < LEN){
+        Run1();
+    }
     Run_Forward();
 }
 
 void Stage2() {
     GoForward();
     // HAL_Delay(500);
-    HAL_Delay(800);
+    // HAL_Delay(800);
+    HAL_Delay(1000);
     GoRight(1.0);
     HAL_Delay(5200 * 2.2);
     GoRight(0.4);
@@ -218,12 +233,16 @@ void Stage3() {
 }
 
 void NextLane() {
+    GoLeft();
+    HAL_Delay(300);
     while(!WL_2){ Run_Left(); }
     while( WL_2){ Run_Left(); }
     Stop();
 }
 
 void PrevLane() {
+    GoRight();
+    HAL_Delay(300);
     while(!WR_2){ Run_Right(); }
     while( WR_2){ Run_Right(); }
     Stop();
@@ -231,7 +250,7 @@ void PrevLane() {
 
 void backoff() {
     GoBackward();
-    HAL_Delay(800);
+    HAL_Delay(1000);
     GoBackward(0.2);
     while ( A_1);
     while (!A_1);
@@ -239,15 +258,92 @@ void backoff() {
     Fix();
 }
 
+// 在右侧发射道上的挪动
+// 绕着左前方轮做顺时针旋转
+void Nudge1(int t) {
+    float o  = 1.0 * t;
+    float vy = o * CHASSIS_A;
+    float vx = o * CHASSIS_A;
+
+    SpeedTypeDef V;
+    V.Omega = o; V.X = vx; V.Y = vy;
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+    car.Set_Velocity(V);
+    // HAL_Delay(300);
+    HAL_Delay(200);
+    Stop();
+    car.Set_Control_Method(Control_Method_OMEGA);
+    Stop();
+    HAL_Delay(10);
+}
+
+void Nudge2(int t) {
+    float o  = -1.0 * t;
+    float vy = o * CHASSIS_A;
+    float vx = o * CHASSIS_A;
+
+    SpeedTypeDef V;
+    V.Omega = o; V.X = vx; V.Y = vy;
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+    car.Set_Velocity(V);
+    // HAL_Delay(300);
+    HAL_Delay(200);
+    Stop();
+    car.Set_Control_Method(Control_Method_OMEGA);
+    Stop();
+    HAL_Delay(10);
+}
+
 void GoPickup() {
+    claw.open();
+    HAL_Delay(500);
+
     uint32_t t0 = HAL_GetTick();
-    uint32_t LEN = 1800;
+    // uint32_t LEN = 1800;
+    uint32_t LEN = 1200;
+    GoForward();
     while (HAL_GetTick() - t0 < LEN){
         Run1();
     }
     Stop();
 
+    // claw.open();
+    actuator_down();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+    claw.close();
+    actuator_up();
+    HAL_Delay(ACTUATOR_HAL_DELAY);
+    actuator_stop();
+}
+
+void backoffBack() {
+    GoBackward();
+    HAL_Delay(1500);
+    GoBackward(0.2);
+    while ( A_1);
+    while (!A_1);
+    Stop();
+    Fix();
+}
+
+void GoPickupBack() {
     claw.open();
+    HAL_Delay(500);
+
+    uint32_t t0 = HAL_GetTick();
+    uint32_t LEN = 2500;
+    GoForward();
+    while (HAL_GetTick() - t0 < LEN){
+        Run1();
+    }
+    Stop();
+    HAL_Delay(250);
+    // GoBackward(0.4);
+    // HAL_Delay(400);
+    // Stop();
+
+    // claw.open();
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
@@ -260,6 +356,7 @@ void GoPickup() {
 void GoPutdown() {
     uint32_t t0 = HAL_GetTick();
     uint32_t LEN = 2500;
+    GoForward();
     while (HAL_GetTick() - t0 < LEN){
         Run1();
     }
@@ -279,39 +376,169 @@ void GoPutdown() {
     claw.close();
 }
 
-void Stage4() {
-    int color;
-    bool pickedup = false;
-
-// 1st lane
-    NextLane();
-    color = Recognize();
-    if (color) {
-        GoPickup();
-        pickedup = true;
-    }
-
-// 2nd lane
-    NextLane();
-    if (pickedup) {
-        // pass
-        NextLane();
-    } else {
-        // pickup
-        pickedup = true;
-    }
+void TurnAtCrossing(int interval) {
+    RRotate(-1);
+    HAL_Delay(interval);
+    // while (!WL_3);
+    // while ( WL_3);
+    RRotate(-0.4);
+    while (!WL_3);
+    while ( WL_3);
+    Stop();
 }
 
-void Stage5() {
-    RRotate(-1);
-    while(A_1);
-    RRotate(-0.4);
-    while(!A_1);
-    RRotate(-1);
-    while(A_1);
-    RRotate(-0.4);
-    while(!A_1);
-    Stop();
+#define NUDGES1
+// #define NUDGES2
+
+void Stage4() {
+    bool pickedup = false;
+
+    NextLane();
+    if (Recognize()) {
+        GoPickup(); backoff();
+        pickedup = true;
+    }
+
+    NextLane();
+    HAL_Delay(200);
+    if (!pickedup && Recognize()) {
+        GoPickup(); backoff();
+        pickedup = true;
+    }
+
+    NextLane();
+    HAL_Delay(200);
+
+    Fix();
+    GoPutdown();
+    HAL_Delay(1000);
+#ifdef NUDGES1
+    Nudge1();
+    HAL_Delay(500);
+#endif
+    HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+    HAL_Delay(700);
+    HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES1
+    HAL_Delay(500);
+    Nudge1(-0.6);
+#endif
+    backoff();
+    Fix();
+
+    NextLane();
+    HAL_Delay(1000);
+    GoPickup(); backoff();
+
+    NextLane();
+    HAL_Delay(200);
+
+    Fix();
+    GoPutdown();
+    HAL_Delay(1000);
+#ifdef NUDGES2
+    Nudge2();
+    HAL_Delay(500);
+#endif
+    HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+    HAL_Delay(700);
+    HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES2
+    HAL_Delay(500);
+    Nudge2(-0.6);
+#endif
+    backoff();
+    Fix();
+
+// 后面的三个壶
+    TurnAtCrossing();
+    Fix();
+
+    if (Recognize()) {
+        GoPickupBack();
+        backoffBack();
+        TurnAtCrossing(4300);
+        Fix();
+
+        GoPutdown();
+        HAL_Delay(1000);
+#ifdef NUDGES2
+        Nudge2();
+        HAL_Delay(500);
+#endif
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+        HAL_Delay(700);
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES2
+        HAL_Delay(500);
+        Nudge2(-0.6);
+#endif
+        backoff();
+        Fix(); 
+        TurnAtCrossing();
+        Fix(); 
+        HAL_Delay(200);
+    }
+
+    NextLane();
+    HAL_Delay(200);
+
+    if (Recognize()) {
+        GoPickupBack();
+        backoffBack();
+        Fix();
+        NextLane();
+        TurnAtCrossing(4300);
+        Fix();
+
+        GoPutdown();
+        HAL_Delay(1000);
+#ifdef NUDGES1
+        Nudge1();
+        HAL_Delay(500);
+#endif
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+        HAL_Delay(700);
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES1
+        HAL_Delay(500);
+        Nudge1(-0.6);
+#endif
+        backoff();
+        Fix(); 
+        TurnAtCrossing();
+    } else {
+        NextLane();
+    }
+    Fix(); 
+    HAL_Delay(200);
+
+    if (Recognize()) {
+        GoPickupBack();
+        backoffBack();
+        TurnAtCrossing(4300);
+        Fix();
+
+        GoPutdown();
+        HAL_Delay(1000);
+#ifdef NUDGES1
+        Nudge1();
+        HAL_Delay(500);
+#endif
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+        HAL_Delay(700);
+        HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES1
+        HAL_Delay(500);
+        Nudge1(-0.6);
+#endif
+        backoff();
+        Fix(); 
+    } else {
+        ;
+    }
+
+    while (1);
 }
 
 /*

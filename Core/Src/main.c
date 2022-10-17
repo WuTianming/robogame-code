@@ -145,9 +145,13 @@ int main(void)
 */
 
 // /* // 三审
-  // Stage1();
-  // Stage2();
-  // Stage3();
+  // Nudge2(); while (1);
+
+  Stage1();
+  Stage2();
+  Stage3();
+  Stage4();
+  while (1);
 
   NextLane();
   HAL_Delay(200);
