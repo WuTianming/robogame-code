@@ -19,9 +19,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "mpu6050.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -115,6 +117,7 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   MX_TIM1_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   car.Init();
   car.Set_Control_Method(Control_Method_OMEGA);
@@ -123,12 +126,30 @@ int main(void)
   // car.claw = &claw;
   HAL_TIM_Base_Start_IT(&htim3);
   actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY);
-  actuator_stop();
+  // HAL_Delay(ACTUATOR_HAL_DELAY);
+  // actuator_stop();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  while (MPU6050_Init(&hi2c2) == 1);
+
+  {
+    char s[] = "mpu init done\n";
+    HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof(s), 100);
+  }
+
+  MPU6050_t mpu;
+
+  while (1) {
+break;
+    MPU6050_Read_All(&hi2c2, &mpu);
+    char s[100];
+    int len = sprintf(s, "kalman angle X = %f\n", mpu.KalmanAngleX);
+    HAL_USART_Transmit(&husart1, (const uint8_t *)s, len, 100);
+    HAL_Delay(100);
+  }
+
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
 
@@ -144,51 +165,56 @@ int main(void)
   }
 */
 
-// /* // 三审
-  // Nudge2(); while (1);
+  // 单独做推壶
+  /*
+#define NUDGES1
+#ifdef NUDGES1
+  Nudge1();
+  HAL_Delay(500);
+#endif
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+  HAL_Delay(700);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
+#ifdef NUDGES1
+  HAL_Delay(500);
+  Nudge1(-0.6);
+#endif
+  while (1);
+  */
 
+  // /* // 平地抓壶
+  while (1) {
+    break;
+    claw.close();
+    HAL_Delay(500);
+    claw.open();
+    HAL_Delay(1000);
+  }
+  claw.open();
+  actuator_down();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  claw.close();
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  HAL_Delay(300);
+  actuator_down();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  claw.open();
+  actuator_up();
+  HAL_Delay(ACTUATOR_HAL_DELAY);
+  actuator_stop();
+  while (1);
+
+// /* // 三审
   Stage1();
   Stage2();
   Stage3();
   Stage4();
   while (1);
 
-  NextLane();
-  HAL_Delay(200);
-
-  NextLane();
-  HAL_Delay(1000);
-  GoPickup(); backoff();
-
-  NextLane();
-  HAL_Delay(200);
-
-  Fix();
-  GoPutdown();
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
-  HAL_Delay(700);
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-  backoff();
-  Fix();
-
-  NextLane();
-  HAL_Delay(1000);
-  GoPickup(); backoff();
-
-  NextLane();
-  HAL_Delay(200);
-
-  Fix();
-  GoPutdown();
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
-  HAL_Delay(700);
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-  backoff();
-  Fix();
-  while (1);
-  
   // */
 
 /* // 测试升降
@@ -230,19 +256,6 @@ int main(void)
     int len = sprintf(ss, "%d\n", csb_get_distance());
     HAL_USART_Transmit(&husart1, (const uint8_t *)ss, len, 100);
   }
-  */
-
-  // /* // 平地抓壶
-  /*
-  claw.close();
-  actuator_down();
-  HAL_Delay(ACTUATOR_HAL_DELAY);
-  actuator_stop();
-  claw.open();
-  actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY);
-  actuator_stop();
-  while (1);
   */
 
 /*
