@@ -72,6 +72,7 @@ User/Chassis.cpp \
 User/DR16.cpp \
 User/PID.cpp \
 User/Steer.cpp \
+User/gyro.cpp \
 User/motor.cpp \
 User/mpu6050.cpp \
 User/search.cpp \

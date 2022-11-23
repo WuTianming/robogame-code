@@ -23,7 +23,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "mpu6050.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -32,6 +31,7 @@
 #include "Chassis.hpp"
 #include "Steer.hpp"
 #include "search.hpp"
+#include "gyro.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,6 +123,7 @@ int main(void)
   car.Set_Control_Method(Control_Method_OMEGA);
   car.Set_DR16(false);
   claw.Init(&htim8, TIM_CHANNEL_1);
+  gyro_init();
   // car.claw = &claw;
   HAL_TIM_Base_Start_IT(&htim3);
   actuator_up();
@@ -132,23 +133,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (MPU6050_Init(&hi2c2) == 1);
 
-  {
-    char s[] = "mpu init done\n";
-    HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof(s), 100);
-  }
-
-  MPU6050_t mpu;
-
-  while (1) {
-break;
-    MPU6050_Read_All(&hi2c2, &mpu);
-    char s[100];
-    int len = sprintf(s, "kalman angle X = %f\n", mpu.KalmanAngleX);
-    HAL_USART_Transmit(&husart1, (const uint8_t *)s, len, 100);
-    HAL_Delay(100);
-  }
+// /*
+  // 陀螺仪输出数据
+    while (true) {
+      HAL_Delay(100);
+      char s[200];
+      int len = sprintf(s, "kalman omega z = %6lf, total = %7lf\n", mpu.Gz, getAngle());
+      HAL_USART_Transmit(&husart1, (const uint8_t *)s, len, 100);
+    }
+// */
 
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
@@ -182,7 +176,7 @@ break;
   while (1);
   */
 
-  // /* // 平地抓壶
+  /* // 平地抓壶
   while (1) {
     break;
     claw.close();
@@ -207,14 +201,14 @@ break;
   HAL_Delay(ACTUATOR_HAL_DELAY);
   actuator_stop();
   while (1);
+  */
 
 // /* // 三审
-  Stage1();
-  Stage2();
-  Stage3();
+  // Stage1();
+  // Stage2();
+  // Stage3();
   Stage4();
   while (1);
-
   // */
 
 /* // 测试升降
@@ -410,6 +404,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   // htim3 is used to trigger PID recalculation
   if (htim == &htim3) {
     car.Calculate_TIM_PeriodElapsedCallback();
+    gyro_callback();
   }
 }
 

@@ -25,6 +25,10 @@ const float fb_vel = 0.4;
 const float lr_vel = 0.4;
 const float rvel   = 1;
 const float rmicro = 0.4;
+// const float fb_vel = 0.7;
+// const float lr_vel = 0.7;
+// const float rvel   = 1.3;
+// const float rmicro = 0.7;
 
 void actuator_up() {
   car.Set_Control_Method(Control_Method_OPENLOOP);
@@ -130,7 +134,7 @@ void AdjustB() {
 }
 
 int Recognize() {
-    // return 1;
+    return 1;
 
     HAL_Delay(1000);
     char str[31]; str[30] = '\0';
@@ -211,12 +215,15 @@ void Stage1() {
 
 void Stage2() {
     GoForward();
+    HAL_Delay(1000);
     // HAL_Delay(500);
     // HAL_Delay(800);
-    HAL_Delay(1000);
+
     GoRight(1.0);
-    HAL_Delay(5200 * 2.2);
+    // HAL_Delay(5200 * 2.2);   // low battery
+    HAL_Delay(5200 * 1.3);
     GoRight(0.4);
+
 #define RIGHT_HAS_BLACK (!WR_1 || !WR_2 || !WR_3)
     while (!RIGHT_HAS_BLACK);
     while ( RIGHT_HAS_BLACK);
@@ -227,7 +234,7 @@ void Stage2() {
 void Stage3() {
     RRotate(-1);
     while(A_1);
-    RRotate(-0.4);
+    RRotate(-rmicro);
     while(!A_1);
     Stop();
 }
@@ -260,7 +267,7 @@ void backoff() {
 
 // 在右侧发射道上的挪动
 // 绕着左前方轮做顺时针旋转
-void Nudge1(int t) {
+void Nudge1(float t) {
     float o  = 1.0 * t;
     float vy = o * CHASSIS_A;
     float vx = o * CHASSIS_A;
@@ -277,7 +284,7 @@ void Nudge1(int t) {
     HAL_Delay(10);
 }
 
-void Nudge2(int t) {
+void Nudge2(float t) {
     float o  = -1.0 * t;
     float vy = o * CHASSIS_A;
     float vx = o * CHASSIS_A;
@@ -354,6 +361,8 @@ void GoPickupBack() {
 }
 
 void GoPutdown() {
+    car.Set_Control_Method(Control_Method_OMEGA);   // reset integral variable
+
     uint32_t t0 = HAL_GetTick();
     uint32_t LEN = 2500;
     GoForward();
@@ -551,7 +560,7 @@ void Stage4() {
 
 bool FixLeft(void) {
     bool has_adj = false;
-    while (!A_3) { GoForward(0.2); has_adj = true; }
+    while (!A_3) { GoForward(0.2); has_adj = true; }    // move A_3 out of the black
     Stop();
     while (!A_1) { GoBackward(0.2); has_adj = true; }
     Stop();
