@@ -326,9 +326,8 @@ void Nudge1(float t) {
     Stop();
     // static const double targetAngle = 2.0;
 
-    float o  = 0.6 * t;
-    // float o  = 1.0 * t;
-    // TODO
+    // float o  = 0.6 * t;
+    float o  = 1.0 * t;
     float vy = -o * CHASSIS_A;
     float vx = o * CHASSIS_A;
     // float vy = 0, vx = 0;
@@ -373,7 +372,8 @@ void Nudge2(float t) {
 
     V.Omega = o; V.X = vx; V.Y = vy;
     car.Set_Velocity(V);
-    HAL_Delay(150);
+    // HAL_Delay(150);
+    HAL_Delay(100);
     // int i = 0;
     // while (i < 4000) {
     //     angle = -getAngle();
@@ -390,15 +390,14 @@ void Nudge2(float t) {
 }
 
 void GoPickup() {
-    // TODO
     car.Set_Control_Method(Control_Method_OMEGA);   // reset integral variable
 
     HAL_Delay(500);
 
     uint32_t t0 = HAL_GetTick();
     // uint32_t LEN = 1800;
-    // uint32_t LEN = 1200;    // 恰恰好碰到那个位置，有时会差一点 TODO
-    uint32_t LEN = 1400;    // 恰恰好碰到那个位置，有时会差一点 TODO
+    // uint32_t LEN = 1200;    // 恰恰好碰到那个位置，有时会差一点
+    uint32_t LEN = 1400;
     GoForward();
     while (HAL_GetTick() - t0 < LEN){
         Run1();

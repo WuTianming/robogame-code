@@ -151,31 +151,7 @@ int main(void)
   }
 */
 
-  // 单独做推壶
-  /*
-#define NUDGES1
-#ifdef NUDGES1
-  Nudge1();
-  HAL_Delay(500);
-#endif
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
-  HAL_Delay(700);
-  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES1
-  HAL_Delay(500);
-  Nudge1(-0.6);
-#endif
-  while (1);
-  */
-
-  /* // 平地抓壶
-  while (1) {
-    break;
-    claw.close();
-    HAL_Delay(500);
-    claw.open();
-    HAL_Delay(1000);
-  }
+// /* // 调整 nudges
   claw.open();
   actuator_down();
   HAL_Delay(ACTUATOR_HAL_DELAY);
@@ -184,7 +160,9 @@ int main(void)
   actuator_up();
   HAL_Delay(ACTUATOR_HAL_DELAY);
   actuator_stop();
-  HAL_Delay(300);
+  HAL_Delay(1000);
+  if (0) Nudge1();
+  else   Nudge2();
   actuator_down();
   HAL_Delay(ACTUATOR_HAL_DELAY);
   actuator_stop();
@@ -192,127 +170,19 @@ int main(void)
   actuator_up();
   HAL_Delay(ACTUATOR_HAL_DELAY);
   actuator_stop();
+  HAL_Delay(500);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
+  HAL_Delay(700);
+  HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
   while (1);
-  */
 
-// /* // 三审
-
-  // Fix();
-  // Nudge1();
-  // Nudge1(-1);
-  // Fix();
-  // while(1);
-
+  // 正式比赛流程
   Stage1();
   Stage2();
-  // // Stop();
-  // // while (1);
   Stage3();
-  // Nudge2();
-  // while (1);
   Stage4();
   while (1);
   // */
-
-/* // 测试升降
-  while (1) {
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY);
-    actuator_stop();
-    // while (1);
-
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
-    actuator_stop();
-
-    HAL_Delay(300);
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
-  }
-  */
-
-/* Run12();
-
-  vel.Y = 0.3;
-  car.Set_Velocity(vel);
-  while (1) {
-    HAL_Delay(1000);
-    vel.Y = 0.0;
-    vel.Omega = 0.3;
-    car.Set_Velocity(vel);
-    HAL_Delay(1000);
-    vel.Y = 0.3;
-    car.Set_Velocity(vel);
-  }
-*/
-
-/* while (1) {
-    const char *s = "heartbeartttt\n";
-    HAL_USART_Transmit(&husart1, (const uint8_t *)s, sizeof("heartbeartttt\n"), 100);
-    char ss[40];
-    int len = sprintf(ss, "%d\n", csb_get_distance());
-    HAL_USART_Transmit(&husart1, (const uint8_t *)ss, len, 100);
-  }
-  */
-
-/*
-  actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY * 2);
-  actuator_down();
-  HAL_Delay(ACTUATOR_HAL_DELAY);
-  while (1) {
-    // actuator_up();
-    // HAL_Delay(ACTUATOR_HAL_DELAY);
-    // actuator_stop();
-    // HAL_Delay(ACTUATOR_HAL_DELAY / 2);
-    // actuator_down();
-    // HAL_Delay(ACTUATOR_HAL_DELAY);
-    claw.open();
-    HAL_Delay(1000);
-    claw.close();
-    HAL_Delay(1000);
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2);
-    actuator_stop();
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY);
-    actuator_stop();
-    claw.open();
-    GoBackward(0.4);
-    HAL_Delay(250);
-    Stop();
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY);
-    actuator_stop();
-    while (1);
-  }
-  */
-
-  /* // 高度抓壶
-  actuator_up();
-  HAL_Delay(ACTUATOR_HAL_DELAY);
-  claw.open();
-  HAL_Delay(ACTUATOR_HAL_DELAY / 4);
-  while (1) {
-    claw.open();
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 5);
-    actuator_stop();
-    claw.close();
-    HAL_Delay(500);
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 3);
-    actuator_stop();
-    HAL_Delay(500);
-    actuator_down();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 5);
-    actuator_stop();
-    claw.open();
-    actuator_up();
-    HAL_Delay(ACTUATOR_HAL_DELAY / 2 + ACTUATOR_HAL_DELAY / 3);
-    actuator_stop();
-  }
-  */
 
   while (1)
   {
