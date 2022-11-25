@@ -253,12 +253,32 @@ void Stage1() {
 void Stage2() {
     GoForward();
     HAL_Delay(1000);
+    Stop();
+
+/*
+    HAL_Delay(50);
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+    HAL_Delay(50);
     // HAL_Delay(500);
     // HAL_Delay(800);
+    float o  = -1.0; float vy = o * CHASSIS_A; float vx = o * CHASSIS_A;
+    SpeedTypeDef V;
+    V.Omega = o; V.X = vx; V.Y = vy;
+    car.Set_Velocity(V);
+    // HAL_Delay(80);
+    HAL_Delay(50);
+    Stop();
+*/
+
+    for (int i = 0; i < 4; ++i) {
+        car.Motor[i].Omega_PID.Init(600, 800, 0, 6000, 30000);     // fast to the right
+    }
+    car.Set_Control_Method(Control_Method_OMEGA);
+    HAL_Delay(300);
 
     { // 向右狂奔
         uint32_t nowtick = HAL_GetTick();
-        GoRight(1.0);
+        GoRight(2);
         // HAL_Delay(5200 * 2.2);   // low battery
         uint32_t limit = 5200 * 1.3;
         while (HAL_GetTick() - nowtick < limit) {
@@ -281,6 +301,12 @@ void Stage2() {
     while ( RIGHT_HAS_BLACK);
 #undef  RIGHT_HAS_BLACK
     Stop();
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+    for (int i = 0; i < 4; ++i) {
+        car.Motor[i].Omega_PID.Init(600, 800, 0, 2000, 30000);     // original
+    }
+    Stop();
+    HAL_Delay(50);
 }
 
 void Stage3() {
@@ -334,12 +360,11 @@ void Nudge1(float t) {
     // float vy = 0, vx = 0;
 
     SpeedTypeDef V;
-    double angle;
 
     V.Omega = o; V.X = vx; V.Y = vy;
     car.Set_Velocity(V);
-    // HAL_Delay(50);
-    HAL_Delay(80);
+    HAL_Delay(50);
+    // HAL_Delay(80);
     // int i = 0;
     // while (i < 40) {
     //     angle = getAngle();
