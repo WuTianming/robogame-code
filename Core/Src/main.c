@@ -179,9 +179,9 @@ int main(void)
 #endif
 
   // 正式比赛流程
-  // Stage1();
-  // Stage2();
-  // Stage3();
+  Stage1();
+  Stage2();
+  Stage3();
   Stage4();
   while (1);
   // */

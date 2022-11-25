@@ -275,7 +275,8 @@ void Stage2() {
     }
     GoRight(0.4);
 
-#define RIGHT_HAS_BLACK (!WR_1 || !WR_2 || !WR_3)
+// #define RIGHT_HAS_BLACK (!WR_1 || !WR_2 || !WR_3)
+#define RIGHT_HAS_BLACK (S_1 || S_2)
     while (!RIGHT_HAS_BLACK);
     while ( RIGHT_HAS_BLACK);
 #undef  RIGHT_HAS_BLACK
@@ -338,7 +339,7 @@ void Nudge1(float t) {
     V.Omega = o; V.X = vx; V.Y = vy;
     car.Set_Velocity(V);
     // HAL_Delay(50);
-    HAL_Delay(100);
+    HAL_Delay(80);
     // int i = 0;
     // while (i < 40) {
     //     angle = getAngle();
