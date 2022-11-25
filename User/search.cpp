@@ -10,6 +10,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "search.hpp"
+#include "printf.h"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -134,22 +135,41 @@ void AdjustB() {
 }
 
 int Recognize() {
-    return 1;
+    // return 1;
 
+    claw.open();
     HAL_Delay(1000);
-    char str[31]; str[30] = '\0';
-    HAL_UART_Receive(&huart4, (uint8_t *)str, 30, 1000);
-    HAL_UART_Receive(&huart4, (uint8_t *)str, 30, 1000);
-    int i = 0;
-    for (i = 0; i < 15; i++) { if (str[i] == 'x') break; }
-    int cx = 0, cy = 0;
-    for (i += 2; str[i] <= '9' && str[i] >= '0'; ++i) cx = cx * 10 + str[i] - '0';
-    for (i += 4; str[i] <= '9' && str[i] >= '0'; ++i) cy = cy * 10 + str[i] - '0';
-    if (cx != 0 || cy != 0) {
-        return 1;
-    } else {
-        return 0;
+    const int LEN = 61;
+    char str[LEN]; str[LEN-1] = '\0';
+    HAL_UART_Receive(&huart4, (uint8_t *)str, LEN, 1000);
+    HAL_UART_Receive(&huart4, (uint8_t *)str, LEN, 1000);
+    {
+        char buf[LEN+2];
+        int len = sprintf(buf, "%s\n", str);
+        HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
     }
+    int i = 0;
+    for (i = 0; i < LEN; ++i) {
+        if (str[i] > '0' && str[i] <= '9') {
+            char buf[40];
+            int len = sprintf(buf, "\nis red\n", str);
+            HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
+            return 1;
+        }
+    }
+    char buf[LEN];
+    int len = sprintf(buf, "\nis NOT red\n", str);
+    HAL_USART_Transmit(&husart1, (const uint8_t *)buf, len, 1000);
+    return 0;
+    // for (i = 0; i < 15; i++) { if (str[i] == 'x') break; }
+    // int cx = 0, cy = 0;
+    // for (i += 2; str[i] <= '9' && str[i] >= '0'; ++i) cx = cx * 10 + str[i] - '0';
+    // for (i += 4; str[i] <= '9' && str[i] >= '0'; ++i) cy = cy * 10 + str[i] - '0';
+    // if (cx != 0 || cy != 0) {
+    //     return 1;
+    // } else {
+    //     return 0;
+    // }
     return 0;
 }
 
@@ -158,6 +178,23 @@ void Run1()
 {
     if(!(WL_1 + WL_2 + WL_3 + WR_1 + WR_2 + WR_3)){
         GoForward();
+    }
+    else if(WL_3 == 1){
+        AdjustL();
+        HAL_Delay(10);
+    }
+    else if(WR_1 == 1){
+        AdjustR();
+        HAL_Delay(10);
+    }
+}
+
+void Run1Straight()
+{
+    if(!(WL_1 + WL_2 + WL_3 + WR_1 + WR_2 + WR_3)){
+        if (S_2) {
+            // AdjustL();
+        }
     }
     else if(WL_3 == 1){
         AdjustL();
@@ -219,9 +256,23 @@ void Stage2() {
     // HAL_Delay(500);
     // HAL_Delay(800);
 
-    GoRight(1.0);
-    // HAL_Delay(5200 * 2.2);   // low battery
-    HAL_Delay(5200 * 1.3);
+    { // 向右狂奔
+        uint32_t nowtick = HAL_GetTick();
+        GoRight(1.0);
+        // HAL_Delay(5200 * 2.2);   // low battery
+        uint32_t limit = 5200 * 1.3;
+        while (HAL_GetTick() - nowtick < limit) {
+            /*
+            if (getAngle() > 3) { // too left
+                AdjustR();
+            } else if (getAngle() < -3) {
+                AdjustL();
+            } else {
+                AdjustL(0);
+            }
+            */
+        }
+    }
     GoRight(0.4);
 
 #define RIGHT_HAS_BLACK (!WR_1 || !WR_2 || !WR_3)
@@ -266,48 +317,88 @@ void backoff() {
 }
 
 // 在右侧发射道上的挪动
-// 绕着左前方轮做顺时针旋转
+// 绕着右前方轮做逆时针旋转
 void Nudge1(float t) {
-    float o  = 1.0 * t;
-    float vy = o * CHASSIS_A;
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+
+    GoBackward(1);
+    HAL_Delay(50);
+    Stop();
+    // static const double targetAngle = 2.0;
+
+    float o  = 0.6 * t;
+    // float o  = 1.0 * t;
+    // TODO
+    float vy = -o * CHASSIS_A;
     float vx = o * CHASSIS_A;
+    // float vy = 0, vx = 0;
 
     SpeedTypeDef V;
+    double angle;
+
     V.Omega = o; V.X = vx; V.Y = vy;
-    car.Set_Control_Method(Control_Method_OPENLOOP);
     car.Set_Velocity(V);
-    // HAL_Delay(300);
-    HAL_Delay(200);
+    HAL_Delay(50);
+    // int i = 0;
+    // while (i < 40) {
+    //     angle = getAngle();
+    //     if (t > 0 && (angle >= targetAngle)) { break; }
+    //     if (t < 0 && (angle <= 0)) { break; }
+    //     // break;      // minimal
+    //     ++i;
+    // }
     Stop();
+
     car.Set_Control_Method(Control_Method_OMEGA);
     Stop();
     HAL_Delay(10);
 }
 
+// 在左侧发射道上的挪动
+// 绕着左前方轮做顺时针旋转
 void Nudge2(float t) {
+    car.Set_Control_Method(Control_Method_OPENLOOP);
+
+    GoBackward(1);
+    HAL_Delay(50);
+    Stop();
+    // static const double targetAngle = 2.0;
+
     float o  = -1.0 * t;
     float vy = o * CHASSIS_A;
     float vx = o * CHASSIS_A;
 
     SpeedTypeDef V;
+    // double angle;
+
     V.Omega = o; V.X = vx; V.Y = vy;
-    car.Set_Control_Method(Control_Method_OPENLOOP);
     car.Set_Velocity(V);
-    // HAL_Delay(300);
-    HAL_Delay(200);
+    HAL_Delay(150);
+    // int i = 0;
+    // while (i < 4000) {
+    //     angle = -getAngle();
+    //     // if (t > 0 && (angle >= targetAngle)) { break; }
+    //     // if (t < 0 && (angle <= 0)) { break; }
+    //     // break;      // minimal
+    //     ++i;
+    // }
     Stop();
+
     car.Set_Control_Method(Control_Method_OMEGA);
     Stop();
     HAL_Delay(10);
 }
 
 void GoPickup() {
-    claw.open();
+    // TODO
+    car.Set_Control_Method(Control_Method_OMEGA);   // reset integral variable
+
     HAL_Delay(500);
 
     uint32_t t0 = HAL_GetTick();
     // uint32_t LEN = 1800;
-    uint32_t LEN = 1200;
+    // uint32_t LEN = 1200;    // 恰恰好碰到那个位置，有时会差一点 TODO
+    uint32_t LEN = 1400;    // 恰恰好碰到那个位置，有时会差一点 TODO
     GoForward();
     while (HAL_GetTick() - t0 < LEN){
         Run1();
@@ -350,7 +441,6 @@ void GoPickupBack() {
     // HAL_Delay(400);
     // Stop();
 
-    // claw.open();
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
@@ -360,24 +450,41 @@ void GoPickupBack() {
     actuator_stop();
 }
 
-void GoPutdown() {
+#define NUDGES1
+#define NUDGES2
+
+void GoPutdown(int nudge) {
     car.Set_Control_Method(Control_Method_OMEGA);   // reset integral variable
 
     uint32_t t0 = HAL_GetTick();
-    uint32_t LEN = 2500;
+    uint32_t LEN = 2000;        // TODO
     GoForward();
     while (HAL_GetTick() - t0 < LEN){
         Run1();
     }
     Stop();
+    HAL_Delay(500);
+    if (nudge == 1) {
+        #ifdef NUDGES1
+            Nudge1();
+            HAL_Delay(300);
+        #endif
+    } else if (nudge == 2) {
+        #ifdef NUDGES2
+            Nudge2();
+            HAL_Delay(300);
+        #endif
+    }
 
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
     claw.open();
     HAL_Delay(300);
-    GoBackward(0.4);
-    HAL_Delay(250);
+
+    // GoBackward(0.4);
+    // HAL_Delay(250);
+
     Stop();
     actuator_up();
     HAL_Delay(ACTUATOR_HAL_DELAY);
@@ -395,9 +502,6 @@ void TurnAtCrossing(int interval) {
     while ( WL_3);
     Stop();
 }
-
-#define NUDGES1
-// #define NUDGES2
 
 void Stage4() {
     bool pickedup = false;
@@ -419,19 +523,15 @@ void Stage4() {
     HAL_Delay(200);
 
     Fix();
-    GoPutdown();
-    HAL_Delay(1000);
-#ifdef NUDGES1
-    Nudge1();
+    GoPutdown(1);   // with nudge = 1
     HAL_Delay(500);
-#endif
     HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
     HAL_Delay(700);
     HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES1
-    HAL_Delay(500);
-    Nudge1(-0.6);
-#endif
+// #ifdef NUDGES1
+//     HAL_Delay(500);
+//     Nudge1(-1);
+// #endif
     backoff();
     Fix();
 
@@ -443,24 +543,21 @@ void Stage4() {
     HAL_Delay(200);
 
     Fix();
-    GoPutdown();
-    HAL_Delay(1000);
-#ifdef NUDGES2
-    Nudge2();
+    GoPutdown(2);   // with nudge = 2
     HAL_Delay(500);
-#endif
     HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
     HAL_Delay(700);
     HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES2
-    HAL_Delay(500);
-    Nudge2(-0.6);
-#endif
+// #ifdef NUDGES2
+//     HAL_Delay(500);
+//     Nudge2(-1);
+// #endif
     backoff();
     Fix();
 
 // 后面的三个壶
     TurnAtCrossing();
+    gyro_calibrate();       // TODO
     Fix();
 
     if (Recognize()) {
@@ -469,19 +566,15 @@ void Stage4() {
         TurnAtCrossing(4300);
         Fix();
 
-        GoPutdown();
-        HAL_Delay(1000);
-#ifdef NUDGES2
-        Nudge2();
+        GoPutdown(2);
         HAL_Delay(500);
-#endif
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
         HAL_Delay(700);
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES2
-        HAL_Delay(500);
-        Nudge2(-0.6);
-#endif
+// #ifdef NUDGES2
+//         HAL_Delay(500);
+//         Nudge2(-1);
+// #endif
         backoff();
         Fix(); 
         TurnAtCrossing();
@@ -500,19 +593,15 @@ void Stage4() {
         TurnAtCrossing(4300);
         Fix();
 
-        GoPutdown();
-        HAL_Delay(1000);
-#ifdef NUDGES1
-        Nudge1();
+        GoPutdown(1);
         HAL_Delay(500);
-#endif
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
         HAL_Delay(700);
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES1
-        HAL_Delay(500);
-        Nudge1(-0.6);
-#endif
+// #ifdef NUDGES1
+//         HAL_Delay(500);
+//         Nudge1(-1);
+// #endif
         backoff();
         Fix(); 
         TurnAtCrossing();
@@ -528,19 +617,15 @@ void Stage4() {
         TurnAtCrossing(4300);
         Fix();
 
-        GoPutdown();
-        HAL_Delay(1000);
-#ifdef NUDGES1
-        Nudge1();
+        GoPutdown(1);
         HAL_Delay(500);
-#endif
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_SET);
         HAL_Delay(700);
         HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
-#ifdef NUDGES1
-        HAL_Delay(500);
-        Nudge1(-0.6);
-#endif
+// #ifdef NUDGES1
+//         HAL_Delay(500);
+//         Nudge1(-1);
+// #endif
         backoff();
         Fix(); 
     } else {
@@ -560,11 +645,11 @@ void Stage4() {
 
 bool FixLeft(void) {
     bool has_adj = false;
-    while (!A_3) { GoForward(0.2); has_adj = true; }    // move A_3 out of the black
+    while (!A_3) { GoForward(0.3); has_adj = true; }    // move A_3 out of the black
     Stop();
-    while (!A_1) { GoBackward(0.2); has_adj = true; }
+    while (!A_1) { GoBackward(0.3); has_adj = true; }
     Stop();
-    while (!A_3) { GoForward(0.2); has_adj = true; }
+    while (!A_3) { GoForward(0.3); has_adj = true; }
     Stop();
     /*
     while (!A_1 || !A_2 || !A_3) {
@@ -648,13 +733,13 @@ bool FixY(void) {
 bool FixX(void) {
     bool has_adj = false;
     while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) > 0) {
-        GoRight(0.2); has_adj = true;
+        GoRight(0.3); has_adj = true;
     } Stop();
     while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) < 0) {
-        GoLeft(0.2); has_adj = true;
+        GoLeft(0.3); has_adj = true;
     } Stop();
     while ((WR_1 + WR_2 + WR_3) - (WL_1 + WL_2 + WL_3) > 0) {
-        GoRight(0.2); has_adj = true;
+        GoRight(0.3); has_adj = true;
     } Stop();
     /*
     while (WR_1 || WR_2 || WR_3 || WL_1 || WL_2 || WL_3) {
@@ -673,6 +758,18 @@ bool FixX(void) {
     return has_adj;
 }
 
+void FixGyro() {
+    while ((S_1 + S_2) - (S_3 + S_4) > 0) {
+        GoRight(0.3);
+    } Stop();
+    while ((S_1 + S_2) - (S_3 + S_4) < 0) {
+        GoLeft(0.3);
+    } Stop();
+    while ((S_1 + S_2) - (S_3 + S_4) > 0) {
+        GoRight(0.3);
+    } Stop();
+}
+
 void Fix(void) {
     /*
     Stop();
@@ -688,5 +785,8 @@ void Fix(void) {
     //     if (!has_adj1) break;
     // }
     Stop();
+    FixGyro();
+    gyro_calibrate();
+    mpu.AngleZ = 0.00;
     HAL_Delay(200);
 }

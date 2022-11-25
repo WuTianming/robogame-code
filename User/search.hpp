@@ -16,6 +16,7 @@
 #include "gpio.h"
 #include "Chassis.hpp"
 #include "Steer.hpp"
+#include "gyro.hpp"
 
 /* Exported macros ------------------------------------------------------------*/
 # define BLACK 1    //识别为黑线时高电平
@@ -42,9 +43,10 @@
 # define D_3   !HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_2)
 
 // 后面巡线模块
-# define S_1   !HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
-# define S_2   !HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
-# define S_3   !HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)
+# define S_1   HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_13)
+# define S_2   HAL_GPIO_ReadPin(GPIOH,GPIO_PIN_15)
+# define S_3   HAL_GPIO_ReadPin(GPIOI,GPIO_PIN_1)
+# define S_4   HAL_GPIO_ReadPin(GPIOG,GPIO_PIN_11)
 
 
 // #define ACTUATOR_HAL_DELAY 2700
@@ -77,7 +79,7 @@ void TurnAtCrossing(int interval = 4000);
 void NextLane(void);
 void PrevLane(void);
 void GoPickup();
-void GoPutdown();
+void GoPutdown(int nudge = 0);
 void backoff();
 void Run1(void);
 void RunAll(void);

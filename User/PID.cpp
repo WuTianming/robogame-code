@@ -203,6 +203,10 @@ float Class_PID::Get_Out()
     return(Out);
 }
 
+void Class_PID::reset() {
+    Integral_Error = 0.00;
+}
+
 /**
  * @brief PID调整值
  *

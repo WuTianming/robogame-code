@@ -122,10 +122,12 @@ int main(void)
   car.Init();
   car.Set_Control_Method(Control_Method_OMEGA);
   car.Set_DR16(false);
+
   claw.Init(&htim8, TIM_CHANNEL_1);
-  gyro_init();
-  // car.claw = &claw;
+
   HAL_TIM_Base_Start_IT(&htim3);
+  // gyro_init();
+
   actuator_up();
   // HAL_Delay(ACTUATOR_HAL_DELAY);
   // actuator_stop();
@@ -133,16 +135,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-// /*
-  // 陀螺仪输出数据
-    while (true) {
-      HAL_Delay(100);
-      char s[200];
-      int len = sprintf(s, "kalman omega z = %6lf, total = %7lf\n", mpu.Gz, getAngle());
-      HAL_USART_Transmit(&husart1, (const uint8_t *)s, len, 100);
-    }
-// */
 
   SpeedTypeDef vel;
   vel.Omega = 0; vel.X = 0; vel.Y = 0;
@@ -204,9 +196,20 @@ int main(void)
   */
 
 // /* // 三审
-  // Stage1();
-  // Stage2();
-  // Stage3();
+
+  // Fix();
+  // Nudge1();
+  // Nudge1(-1);
+  // Fix();
+  // while(1);
+
+  Stage1();
+  Stage2();
+  // // Stop();
+  // // while (1);
+  Stage3();
+  // Nudge2();
+  // while (1);
   Stage4();
   while (1);
   // */
@@ -404,7 +407,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   // htim3 is used to trigger PID recalculation
   if (htim == &htim3) {
     car.Calculate_TIM_PeriodElapsedCallback();
-    gyro_callback();
+    // gyro_callback();
   }
 }
 

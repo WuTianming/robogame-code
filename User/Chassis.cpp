@@ -112,6 +112,9 @@ void Class_Chassis::Init()
 void Class_Chassis::Set_Velocity(SpeedTypeDef __Velocity)
 {
     Velocity = __Velocity;
+    if (this->Control_Method == Control_Method_OPENLOOP) {
+        this->Calculate_TIM_PeriodElapsedCallback();
+    }
 }
 
 /**
@@ -135,6 +138,7 @@ void Class_Chassis::Set_Control_Method(Enum_Control_Method __Control_Method)
 
     for(int i = 0; i < 4; i++) {
         Motor[i].Set_Control_Method(__Control_Method);
+        Motor[i].Omega_PID.reset();
     }
 }
 
@@ -195,8 +199,8 @@ void Class_Chassis::Calculate_TIM_PeriodElapsedCallback()
                 Velocity = v;
         }
 
+if (0) {
         int actuator = DR16.Get_Actuator();
-if (0)
         if (actuator == 1) {
             // up
             if (claw->getstate() == 1) {
@@ -216,6 +220,7 @@ if (0)
             HAL_GPIO_WritePin(actuator1_GPIO_Port, actuator1_Pin, GPIO_PIN_SET);
             HAL_GPIO_WritePin(actuator2_GPIO_Port, actuator2_Pin, GPIO_PIN_RESET);
         }
+}
     }
 
     Math_Constrain(&Velocity.X, -X_MAX, X_MAX);

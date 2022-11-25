@@ -52,6 +52,7 @@ class Class_PID
         void Set_Variable_Speed_I_B(float __Variable_Speed_I_B);
         void Set_I_Separate_Threshold(float __I_Separate_Threshold);
         void Set_D_First(Enum_D_First __D_First);
+        void reset();
 
         float Get_Out();
 
