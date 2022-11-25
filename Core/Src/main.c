@@ -152,6 +152,7 @@ int main(void)
 */
 
 // /* // 调整 nudges
+#ifdef ADJUST
   claw.open();
   actuator_down();
   HAL_Delay(ACTUATOR_HAL_DELAY);
@@ -175,11 +176,12 @@ int main(void)
   HAL_Delay(700);
   HAL_GPIO_WritePin(solenoid_GPIO_Port, solenoid_Pin, GPIO_PIN_RESET);
   while (1);
+#endif
 
   // 正式比赛流程
-  Stage1();
-  Stage2();
-  Stage3();
+  // Stage1();
+  // Stage2();
+  // Stage3();
   Stage4();
   while (1);
   // */

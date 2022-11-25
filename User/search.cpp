@@ -337,7 +337,8 @@ void Nudge1(float t) {
 
     V.Omega = o; V.X = vx; V.Y = vy;
     car.Set_Velocity(V);
-    HAL_Delay(50);
+    // HAL_Delay(50);
+    HAL_Delay(100);
     // int i = 0;
     // while (i < 40) {
     //     angle = getAngle();
@@ -372,8 +373,7 @@ void Nudge2(float t) {
 
     V.Omega = o; V.X = vx; V.Y = vy;
     car.Set_Velocity(V);
-    // HAL_Delay(150);
-    HAL_Delay(100);
+    HAL_Delay(200);
     // int i = 0;
     // while (i < 4000) {
     //     angle = -getAngle();
@@ -404,7 +404,7 @@ void GoPickup() {
     }
     Stop();
 
-    // claw.open();
+    claw.open();
     actuator_down();
     HAL_Delay(ACTUATOR_HAL_DELAY);
     actuator_stop();
@@ -562,6 +562,7 @@ void Stage4() {
     if (Recognize()) {
         GoPickupBack();
         backoffBack();
+        Fix();
         TurnAtCrossing(4300);
         Fix();
 
@@ -613,6 +614,7 @@ void Stage4() {
     if (Recognize()) {
         GoPickupBack();
         backoffBack();
+        Fix();
         TurnAtCrossing(4300);
         Fix();
 
