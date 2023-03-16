@@ -69,7 +69,6 @@ void Stage1();
 void Stage2();
 void Stage3();
 void Stage4();
-void Stage5();
 
 void Nudge1(float t = 1);
 void Nudge2(float t = 1);
@@ -82,8 +81,6 @@ void GoPickup();
 void GoPutdown(int nudge = 0);
 void backoff();
 void Run1(void);
-void RunAll(void);
-void RunAll_Moveleft(void);
 void GoForward(float);	//直行
 void GoBackward(float);
 void GoRight(float);

@@ -346,6 +346,12 @@ void backoff() {
 // 在右侧发射道上的挪动
 // 绕着右前方轮做逆时针旋转
 void Nudge1(float t) {
+    // TODO 看看右边不动的话偏转多少。
+    // car.Set_Control_Method(Control_Method_OMEGA);
+    // Stop();
+    // HAL_Delay(10);
+    // return;
+
     car.Set_Control_Method(Control_Method_OPENLOOP);
 
     GoBackward(1);
