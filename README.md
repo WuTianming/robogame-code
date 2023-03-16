@@ -3,6 +3,7 @@
 ## 代码组织
 
 - 单片机: STM32F429IGT6
+- 相机模块: M5Stack UnitV2
 - 代码生成: STM32CubeMX
 - 构建系统: Unix Makefile
 - 语言: C/C++
@@ -19,8 +20,8 @@
 `-- User
 ```
 
-- Core: 由STM32CubeMX生成的代码。其中的 main.c 为主函数，包含了所有的控制循环。
-- Drivers: 由STM32CubeMX生成的驱动代码。
+- Core: 由 STM32CubeMX 生成的代码。其中的 main.c 为主函数，包含了所有的控制循环。
+- Drivers: 由 STM32CubeMX 生成的驱动代码。
 - User: 所有的外设代码以及一些控制流程代码。（在下方进行介绍）
 
 
@@ -47,6 +48,12 @@
 
 
 - `search.cpp/hpp` **此文件实现了所有的车辆运行逻辑，包括各个流程的处理逻辑。在下方进行介绍。**
+
+
+
+**注：本项目采用了运行 Linux 的 M5Stack UnitV2 摄像头模块进行视觉识别。其与单片机之间的沟通协议非常简单，在此简要介绍：**
+
+（**TODO：串口协议**）
 
 
 
